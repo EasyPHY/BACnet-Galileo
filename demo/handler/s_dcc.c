@@ -56,6 +56,7 @@
  */
 
 uint8_t Send_Device_Communication_Control_Request(
+    PORT_SUPPORT *portParams,
     uint32_t device_id,
     uint16_t timeDuration,      /* 0=optional */
     BACNET_COMMUNICATION_ENABLE_DISABLE state,

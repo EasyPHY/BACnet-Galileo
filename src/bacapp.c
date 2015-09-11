@@ -257,7 +257,7 @@ int bacapp_decode_data(
 #if defined (BACAPP_OBJECT_ID)
             case BACNET_APPLICATION_TAG_OBJECT_ID:
                 {
-                    uint16_t object_type = 0;
+				BACNET_OBJECT_TYPE object_type ;
                     uint32_t instance = 0;
                     len =
                         decode_object_id_safe(&apdu[0], len_value_type,
@@ -1517,7 +1517,7 @@ bool bacapp_parse_application_data(
             case BACNET_APPLICATION_TAG_OBJECT_ID:
                 count = sscanf(argv, "%4d:%7d", &object_type, &instance);
                 if (count == 2) {
-                    value->type.Object_Id.type = (uint16_t) object_type;
+					value->type.Object_Id.type = (BACNET_OBJECT_TYPE)object_type;
                     value->type.Object_Id.instance = instance;
                 } else {
                     status = false;

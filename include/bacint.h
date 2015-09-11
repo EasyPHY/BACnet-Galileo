@@ -28,11 +28,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     /* unsigned value encoding and decoding */
+int encode_unsigned8(
+	uint8_t * apdu,
+	uint8_t value);
+
     int encode_unsigned16(
         uint8_t * apdu,
         uint16_t value);
@@ -78,7 +78,4 @@ extern "C" {
         uint8_t * apdu,
         int32_t * value);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

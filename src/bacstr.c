@@ -282,7 +282,7 @@ bool bitstring_init_ascii(
    initialize by using value=NULL */
 bool characterstring_init(
     BACNET_CHARACTER_STRING * char_string,
-    uint8_t encoding,
+    BACNET_CHARACTER_STRING_ENCODING encoding,
     const char *value,
     size_t length)
 {
@@ -497,10 +497,10 @@ size_t characterstring_capacity(
 }
 
 /* returns the encoding. */
-uint8_t characterstring_encoding(
+BACNET_CHARACTER_STRING_ENCODING characterstring_encoding(
     BACNET_CHARACTER_STRING * char_string)
 {
-    uint8_t encoding = 0;
+    BACNET_CHARACTER_STRING_ENCODING encoding = CHARACTER_UTF8;
 
     if (char_string) {
         encoding = char_string->encoding;
@@ -512,7 +512,7 @@ uint8_t characterstring_encoding(
 /* returns the encoding. */
 bool characterstring_set_encoding(
     BACNET_CHARACTER_STRING * char_string,
-    uint8_t encoding)
+    BACNET_CHARACTER_STRING_ENCODING encoding)
 {
     bool status = false;
 

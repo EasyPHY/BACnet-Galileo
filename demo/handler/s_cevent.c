@@ -48,6 +48,7 @@
  *         or no tsm slot is available.
  */
 uint8_t Send_CEvent_Notify(
+    PORT_SUPPORT *portParams,
     uint32_t device_id,
     BACNET_EVENT_NOTIFICATION_DATA * data)
 {

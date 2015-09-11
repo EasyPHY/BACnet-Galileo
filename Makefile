@@ -65,7 +65,7 @@ library:
 	$(MAKE) -s -C lib all
 
 demos:
-	$(MAKE) -C demo all
+	$(MAKE) -s -C demo all
 
 gateway:
 	$(MAKE) -B -s -C demo gateway
@@ -93,4 +93,5 @@ clean:
 	$(MAKE) -s -C lib clean
 	$(MAKE) -s -C demo clean
 	$(MAKE) -s -C demo/router clean
+#	$(MAKE) -s -C demo/server clean
 	$(MAKE) -s -C demo/gateway clean

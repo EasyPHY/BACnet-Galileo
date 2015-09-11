@@ -29,10 +29,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 /* copy len bytes from src to offset of dest if there is enough space. */
 /* returns 0 if there is not enough space, or the number of bytes copied. */
     size_t memcopy(
@@ -42,7 +38,4 @@ extern "C" {
         size_t len,     /* amount of data to copy */
         size_t max);    /* total size of destination */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

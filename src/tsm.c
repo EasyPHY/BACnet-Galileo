@@ -261,6 +261,7 @@ bool tsm_get_transaction_pdu(
 
 /* called once a millisecond or slower */
 void tsm_timer_milliseconds(
+    PORT_SUPPORT *portParams,
     uint16_t milliseconds)
 {
     unsigned i = 0;     /* counter */
@@ -276,7 +277,7 @@ void tsm_timer_milliseconds(
                 if (TSM_List[i].RetryCount < apdu_retries()) {
                     TSM_List[i].RequestTimer = apdu_timeout();
                     TSM_List[i].RetryCount++;
-                    datalink_send_pdu(&TSM_List[i].dest,
+                    portParams->SendPdu(portParams, &TSM_List[i].dest,
                         &TSM_List[i].npdu_data, &TSM_List[i].apdu[0],
                         TSM_List[i].apdu_len);
                 } else {

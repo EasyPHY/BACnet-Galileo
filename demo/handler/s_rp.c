@@ -60,6 +60,7 @@
  * @return invoke id of outgoing message, or 0 if device is not bound or no tsm available
  */
 uint8_t Send_Read_Property_Request_Address(
+    PORT_SUPPORT *portParams,
     BACNET_ADDRESS * dest,
     uint16_t max_apdu,
     BACNET_OBJECT_TYPE object_type,
@@ -143,6 +144,7 @@ uint8_t Send_Read_Property_Request_Address(
  * @return invoke id of outgoing message, or 0 if device is not bound or no tsm available
  */
 uint8_t Send_Read_Property_Request(
+    PORT_SUPPORT *portParams,
     uint32_t device_id, /* destination device */
     BACNET_OBJECT_TYPE object_type,
     uint32_t object_instance,

@@ -43,10 +43,6 @@ typedef struct {
     } value;
 } BACNET_TIMESTAMP;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 
     void bacapp_timestamp_copy(
         BACNET_TIMESTAMP * dest,
@@ -69,7 +65,4 @@ extern "C" {
         uint8_t tag_number,
         BACNET_TIMESTAMP * value);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

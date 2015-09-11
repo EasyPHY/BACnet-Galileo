@@ -32,10 +32,6 @@
 #include "rp.h"
 #include "wp.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     void Analog_Output_Property_Lists(
         const int **pRequired,
         const int **pOptional,
@@ -121,7 +117,4 @@ extern "C" {
         Test * pTest);
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

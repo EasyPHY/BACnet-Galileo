@@ -37,9 +37,6 @@
 #include <stdint.h>
 #include "indtext.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
     const char *bactext_confirmed_service_name(
         unsigned index);
@@ -136,7 +133,5 @@ extern "C" {
 
 	const char *bactext_lighting_transition(
 		unsigned index);
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+
 #endif

@@ -39,7 +39,7 @@ typedef struct BACnet_Bit_String {
 
 typedef struct BACnet_Character_String {
     size_t length;
-    uint8_t encoding;
+    BACNET_CHARACTER_STRING_ENCODING encoding;
     /* limit - 6 octets is the most our tag and type could be */
     char value[MAX_CHARACTER_STRING_BYTES];
 } BACNET_CHARACTER_STRING;
@@ -51,10 +51,6 @@ typedef struct BACnet_Octet_String {
     /* limit - 6 octets is the most our tag and type could be */
     uint8_t value[MAX_OCTET_STRING_BYTES];
 } BACNET_OCTET_STRING;
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
     void bitstring_init(
         BACNET_BIT_STRING * bit_string);
@@ -98,7 +94,7 @@ extern "C" {
    initialize by using length=0 */
     bool characterstring_init(
         BACNET_CHARACTER_STRING * char_string,
-        uint8_t encoding,
+        BACNET_CHARACTER_STRING_ENCODING encoding,
         const char *value,
         size_t length);
 /* used for ANSI C-Strings */
@@ -132,14 +128,14 @@ extern "C" {
         size_t length);
     bool characterstring_set_encoding(
         BACNET_CHARACTER_STRING * char_string,
-        uint8_t encoding);
+        BACNET_CHARACTER_STRING_ENCODING encoding);
 /* Returns the value */
     char *characterstring_value(
         BACNET_CHARACTER_STRING * char_string);
 /* returns the length */
     size_t characterstring_length(
         BACNET_CHARACTER_STRING * char_string);
-    uint8_t characterstring_encoding(
+           BACNET_CHARACTER_STRING_ENCODING characterstring_encoding(
         BACNET_CHARACTER_STRING * char_string);
     size_t characterstring_capacity(
         BACNET_CHARACTER_STRING * char_string);
@@ -195,8 +191,4 @@ extern "C" {
         BACNET_OCTET_STRING * octet_string1,
         BACNET_OCTET_STRING * octet_string2);
 
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

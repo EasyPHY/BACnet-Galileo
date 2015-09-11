@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include "bacdef.h"
 #include "bacenum.h"
+#include "datalink.h"
 
 typedef struct _confirmed_service_data {
     bool segmented_message;
@@ -48,10 +49,6 @@ typedef struct _confirmed_service_ack_data {
     uint8_t proposed_window_number;
 } BACNET_CONFIRMED_SERVICE_ACK_DATA;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 /* generic unconfirmed function handler */
 /* Suitable to handle the following services: */
 /* I_Am, Who_Is, Unconfirmed_COV_Notification, I_Have, */
@@ -60,6 +57,7 @@ extern "C" {
 /* UTC_Time_Synchronization */
     typedef void (
         *unconfirmed_function) (
+        PORT_SUPPORT *portSupport,
         uint8_t * service_request,
         uint16_t len,
         BACNET_ADDRESS * src);
@@ -82,6 +80,7 @@ extern "C" {
 /* Authenticate, Request_Key */
     typedef void (
         *confirmed_function) (
+        PORT_SUPPORT *portSupport, 
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -185,11 +184,9 @@ extern "C" {
         uint8_t value);
 
     void apdu_handler(
+        PORT_SUPPORT *portSupport,
         BACNET_ADDRESS * src,   /* source address */
         uint8_t * apdu, /* APDU data */
         uint16_t pdu_len);      /* for confirmed messages */
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

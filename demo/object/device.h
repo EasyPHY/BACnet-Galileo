@@ -136,6 +136,7 @@ typedef void (
  */
 typedef void (
     *object_intrinsic_reporting_function) (
+    PORT_SUPPORT *portParams,
     uint32_t object_instance);
 
 
@@ -217,10 +218,6 @@ typedef struct devObj_s {
 } DEVICE_OBJECT_DATA;
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     void Device_Init(
         object_functions_t * object_table);
 
@@ -269,7 +266,7 @@ extern "C" {
         void);
     bool Device_Object_List_Identifier(
         unsigned array_index,
-        int *object_type,
+        BACNET_OBJECT_TYPE *object_type,
         uint32_t * instance);
 
     unsigned Device_Count(
@@ -350,7 +347,7 @@ extern "C" {
         int *object_type,
         uint32_t * object_instance);
     bool Device_Valid_Object_Id(
-        int object_type,
+        BACNET_OBJECT_TYPE object_type,
         uint32_t object_instance);
 
     int Device_Read_Property(
@@ -369,7 +366,8 @@ extern "C" {
 
 #if defined(INTRINSIC_REPORTING)
     void Device_local_reporting(
-        void);
+    PORT_SUPPORT *portParams,
+    );
 #endif
 
 /* Prototypes for Routing functionality in the Device Object.
@@ -429,37 +427,4 @@ extern "C" {
         uint8_t * apdu_buff,
         uint8_t invoke_id);
 
-
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-/** @defgroup ObjFrmwk Object Framework
- * The modules in this section describe the BACnet-stack's framework for
- * BACnet-defined Objects (Device, Analog Input, etc). There are two submodules
- * to describe this arrangement:
- *  - The "object helper functions" which provide C++-like common functionality
- *    to all supported object types.
- *  - The interface between the implemented Objects and the BAC-stack services,
- *    specifically the handlers, which are mediated through function calls to
- *    the Device object.
-    *//** @defgroup ObjHelpers Object Helper Functions
- * @ingroup ObjFrmwk
- * This section describes the function templates for the helper functions that
- * provide common object support.
-    *//** @defgroup ObjIntf Handler-to-Object Interface Functions
- * @ingroup ObjFrmwk
- * This section describes the fairly limited set of functions that link the
- * BAC-stack handlers to the BACnet Object instances.  All of these calls are
- * situated in the Device Object, which "knows" how to reach its child Objects.
- *
- * Most of these calls have a common operation:
- *  -# Call Device_Objects_Find_Functions( for the desired Object_Type )
- *   - Gets a pointer to the object_functions for this Type of Object.
- *  -# Call the Object's Object_Valid_Instance( for the desired object_instance )
- *     to make sure there is such an instance.
- *  -# Call the Object helper function needed by the handler,
- *     eg Object_Read_Property() for the RP handler.
- *
- */
 #endif

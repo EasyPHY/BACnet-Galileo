@@ -43,6 +43,7 @@
  *  @param data [in] The decoded who-has payload from the request.
  */
 static void match_name_or_object(
+    PORT_SUPPORT *portParams,
     BACNET_WHO_HAS_DATA * data)
 {
     int object_type = 0;
@@ -58,7 +59,7 @@ static void match_name_or_object(
             Device_Valid_Object_Name(&data->object.name, &object_type,
             &object_instance);
         if (found) {
-            Send_I_Have(Device_Object_Instance_Number(),
+            Send_I_Have(portParams, Device_Object_Instance_Number(),
                 (BACNET_OBJECT_TYPE) object_type, object_instance,
                 &data->object.name);
         }
@@ -69,7 +70,7 @@ static void match_name_or_object(
             object.identifier.type, data->object.identifier.instance,
             &object_name);
         if (found) {
-            Send_I_Have(Device_Object_Instance_Number(),
+            Send_I_Have(portParams, Device_Object_Instance_Number(),
                 (BACNET_OBJECT_TYPE) data->object.identifier.type,
                 data->object.identifier.instance, &object_name);
         }
@@ -87,6 +88,7 @@ static void match_name_or_object(
  * @param src [in] The BACNET_ADDRESS of the message's source.
  */
 void handler_who_has(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src)
@@ -104,7 +106,7 @@ void handler_who_has(
             && (Device_Object_Instance_Number() <= (uint32_t) data.high_limit))
             directed_to_me = true;
         if (directed_to_me) {
-            match_name_or_object(&data);
+            match_name_or_object(portParams, &data);
         }
     }
 }

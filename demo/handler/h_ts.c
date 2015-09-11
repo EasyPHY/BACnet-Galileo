@@ -53,6 +53,7 @@ static void show_bacnet_date_time(
 #endif
 
 void handler_timesync(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src)
@@ -79,6 +80,7 @@ void handler_timesync(
 }
 
 void handler_timesync_utc(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src)

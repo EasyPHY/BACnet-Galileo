@@ -32,7 +32,7 @@
 #include "npdu.h"
 #include "apdu.h"
 #include "handlers.h"
-#include "client.h"
+//#include "client.h"
 
 #if PRINT_ENABLED
 #include <stdio.h>
@@ -64,6 +64,7 @@
  *  @param pdu_len [in] The size of the received message in the pdu[] buffer.
  */
 void npdu_handler(
+    PORT_SUPPORT *portParams,
     BACNET_ADDRESS * src,       /* source address */
     uint8_t * pdu,      /* PDU data */
     uint16_t pdu_len)
@@ -92,7 +93,7 @@ void npdu_handler(
                     /* ConfirmedBroadcastReceived */
                     /* then enter IDLE - ignore the PDU */
                 } else {
-                    apdu_handler(src, &pdu[apdu_offset],
+                    apdu_handler(portParams, src, &pdu[apdu_offset],
                         (uint16_t) (pdu_len - apdu_offset));
                 }
             } else {

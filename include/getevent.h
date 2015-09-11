@@ -51,10 +51,6 @@ typedef int (
     unsigned index,
     BACNET_GET_EVENT_INFORMATION_DATA * getevent_data);
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     int getevent_encode_apdu(
         uint8_t * apdu,
         uint8_t invoke_id,

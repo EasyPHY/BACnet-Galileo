@@ -99,6 +99,7 @@ int Send_UCOV_Notify(
  *         no slot is available from the tsm for sending.
  */
 uint8_t Send_COV_Subscribe(
+    PORT_SUPPORT *portParams,
     uint32_t device_id,
     BACNET_SUBSCRIBE_COV_DATA * cov_data)
 {
@@ -125,7 +126,7 @@ uint8_t Send_COV_Subscribe(
         datalink_get_my_address(&my_address);
         npdu_encode_npdu_data(&npdu_data, true, MESSAGE_PRIORITY_NORMAL);
         pdu_len =
-            npdu_encode_pdu(&Handler_Transmit_Buffer[0], &dest, &my_address,
+            npdu_encode_pdu( Handler_Transmit_Buffer, &dest, &my_address,
             &npdu_data);
         /* encode the APDU portion of the packet */
         len =

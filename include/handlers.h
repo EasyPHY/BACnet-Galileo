@@ -40,19 +40,17 @@
 #include "getevent.h"
 #include "get_alarm_sum.h"
 #include "alarm_ack.h"
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#include "datalink.h"
 
     void handler_unrecognized_service(
+        PORT_SUPPORT *portParams, 
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * dest,
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
 
     void npdu_handler(
+        PORT_SUPPORT *portParams,
         BACNET_ADDRESS * src,   /* source address */
         uint8_t * pdu,  /* PDU data */
         uint16_t pdu_len);      /* length PDU  */
@@ -64,11 +62,13 @@ extern "C" {
         uint16_t pdu_len);
 
     void handler_who_is(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src);
 
     void handler_who_is_unicast(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src);
@@ -84,6 +84,7 @@ extern "C" {
         BACNET_ADDRESS * src);
 
     void handler_who_has(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src);
@@ -99,11 +100,13 @@ extern "C" {
         BACNET_ADDRESS * src);
 
     void handler_i_am_bind(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src);
 
     void handler_read_property(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -116,12 +119,14 @@ extern "C" {
         BACNET_CONFIRMED_SERVICE_ACK_DATA * service_data);
 
     void handler_write_property(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
 
     void handler_write_property_multiple(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -159,12 +164,14 @@ extern "C" {
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
 
     void handler_reinitialize_device(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
 
     void handler_device_communication_control(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -203,6 +210,7 @@ extern "C" {
         BACNET_ADDRESS * address);
 
     void handler_read_property_multiple(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -229,12 +237,14 @@ extern "C" {
         BACNET_READ_ACCESS_DATA * rpm_data);
 
     void handler_cov_subscribe(
+    PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
     void handler_cov_task(
-        void);
+            PORT_SUPPORT *portParams,
+);
     void handler_cov_timer_seconds(
         uint32_t elapsed_seconds);
     void handler_cov_init(
@@ -248,6 +258,7 @@ extern "C" {
         uint16_t service_len,
         BACNET_ADDRESS * src);
     void handler_ccov_notification(
+    PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -260,6 +271,7 @@ extern "C" {
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
 
     void handler_alarm_ack(
+    PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -306,6 +318,7 @@ extern "C" {
         get_event_info_function pFunction);
 
     void handler_get_event_information(
+    PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -316,6 +329,7 @@ extern "C" {
         get_alarm_summary_function pFunction);
 
     void handler_get_alarm_summary(
+    PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -333,10 +347,6 @@ extern "C" {
         BACNET_ADDRESS *src,
         BACNET_CONFIRMED_SERVICE_ACK_DATA *service_data);
 
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 /** @defgroup MISCHNDLR Miscellaneous Handler Utilities
  * Various utilities and functions to support the Handlers.
  */

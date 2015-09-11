@@ -38,9 +38,6 @@
 #include "get_alarm_sum.h"
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
     typedef struct analog_input_descr {
         unsigned Event_State:3;
@@ -137,6 +134,7 @@ extern "C" {
     /* note: header of Intrinsic_Reporting function is required
        even when INTRINSIC_REPORTING is not defined */
     void Analog_Input_Intrinsic_Reporting(
+   		PORT_SUPPORT *portParams,
         uint32_t object_instance);
 
 #if defined(INTRINSIC_REPORTING)
@@ -162,7 +160,4 @@ extern "C" {
         Test * pTest);
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

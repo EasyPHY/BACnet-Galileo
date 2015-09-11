@@ -385,7 +385,7 @@ int npdu_decode(
         /* Bit 3: Source specifier where: */
         /* 0 =  SNET, SLEN, and SADR absent */
         /* 1 =  SNET, SLEN, and SADR present */
-        /* SLEN = 0 Invalid */
+        /* SLEN = 0 Invalid */  // ekhtodo, fix conflicting comments here.
         /* SLEN > 0 specifies length of SADR field */
         if (npdu[1] & BIT3) {
             len += decode_unsigned16(&npdu[len], &src_net);

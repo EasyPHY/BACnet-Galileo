@@ -63,8 +63,8 @@ bool bacnet_address_same(
     BACNET_ADDRESS * dest,
     BACNET_ADDRESS * src)
 {
-    uint8_t i = 0;      /* loop counter */
-    uint8_t max_len = 0;        /* used for dynamic max */
+    uint8_t i ;             /* loop counter */
+    uint8_t max_len ;       /* used for dynamic max */
 
     if (dest == src)    /* same ? */
         return true;
@@ -95,3 +95,19 @@ bool bacnet_address_same(
     }
     return true;
 }
+
+
+void set_global_broadcast(BACNET_ADDRESS *dest)
+{
+	dest->net = 65535;
+    dest->len = 0;
+}
+
+void set_local_broadcast(BACNET_ADDRESS *dest)
+{
+	dest->net = 0;
+	dest->len = 0;  // indicates broadcast on local network
+}
+
+
+

@@ -35,14 +35,27 @@
 #include <stdint.h>     /* for standard integer types uint8_t etc. */
 #include <stdbool.h>    /* for the standard bool type. */
 #include <time.h>
+
+#ifdef _MSC_VER
+#include <WinSock2.h>
+#else
+#include <socklib.h>
+#include <selectlib.h>
+#include "in.h"
+#endif
+
+#include <string.h>
 #include "bacenum.h"
 #include "bacdcode.h"
 #include "bacint.h"
 #include "bvlc.h"
+#include "bip.h"
+
 #ifndef DEBUG_ENABLED
 #define DEBUG_ENABLED 0
 #endif
 #include "debug.h"
+#include "btaDebug.h"
 
 /** @file bvlc.c  Handle the BACnet Virtual Link Control (BVLC),
  * which includes: BACnet Broadcast Management Device,

@@ -42,6 +42,7 @@
 #include "tsm.h"
 #include "dcc.h"
 #include "iam.h"
+#include "datalink.h"
 
 /** @file apdu.c  Handles APDU services */
 
@@ -440,6 +441,7 @@ static bool apdu_unconfirmed_dcc_disabled(
  * @param apdu_len [in] The total (remaining) length of the apdu.
  */
 void apdu_handler(
+    PORT_SUPPORT *portParams, 
     BACNET_ADDRESS * src,
     uint8_t * apdu,     /* APDU data */
     uint16_t apdu_len)
@@ -474,10 +476,10 @@ void apdu_handler(
                 }
                 if ((service_choice < MAX_BACNET_CONFIRMED_SERVICE) &&
                     (Confirmed_Function[service_choice]))
-                    Confirmed_Function[service_choice] (service_request,
+                    Confirmed_Function[service_choice] (portParams, service_request,
                         service_request_len, src, &service_data);
                 else if (Unrecognized_Service_Handler)
-                    Unrecognized_Service_Handler(service_request,
+                    Unrecognized_Service_Handler(portParams, service_request,
                         service_request_len, src, &service_data);
                 break;
             case PDU_TYPE_UNCONFIRMED_SERVICE_REQUEST:
@@ -494,7 +496,7 @@ void apdu_handler(
                 }
                 if (service_choice < MAX_BACNET_UNCONFIRMED_SERVICE) {
                     if (Unconfirmed_Function[service_choice])
-                        Unconfirmed_Function[service_choice] (service_request,
+                        Unconfirmed_Function[service_choice] (portParams, service_request,
                             service_request_len, src);
                 }
                 break;

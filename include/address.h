@@ -30,10 +30,6 @@
 #include "bacdef.h"
 #include "readrange.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     void address_init(
         void);
 
@@ -104,8 +100,4 @@ extern "C" {
     bool address_mac_from_ascii(
         BACNET_MAC_ADDRESS *mac,
         char *arg);
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

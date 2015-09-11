@@ -29,12 +29,16 @@
 #include "bacdef.h"
 #include "bacaddr.h"
 #include "npdu.h"
+#include "datalink.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+void Send_I_Am(PORT_SUPPORT *portParams, uint8_t * buffer);
 
-    int iam_encode_apdu(
+	void Send_I_Am_Unicast(
+        PORT_SUPPORT *portParams,
+		uint8_t * buffer,
+		BACNET_ADDRESS * src);
+	
+	int iam_encode_apdu(
         uint8_t * apdu,
         uint32_t device_id,
         unsigned max_apdu,
@@ -48,20 +52,5 @@ extern "C" {
         int *pSegmentation,
         uint16_t * pVendor_id);
 
-#ifdef TEST
-#include "ctest.h"
-    int iam_decode_apdu(
-        uint8_t * apdu,
-        uint32_t * pDevice_id,
-        unsigned *pMax_apdu,
-        int *pSegmentation,
-        uint16_t * pVendor_id);
 
-    void testIAm(
-        Test * pTest);
-#endif
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

@@ -85,6 +85,7 @@ void handler_i_am_add(
  * @param src [in] The BACNET_ADDRESS of the message's source.
  */
 void handler_i_am_bind(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src)

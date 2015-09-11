@@ -1,6 +1,6 @@
 /**************************************************************************
 *
-* Copyright (C) 2012 Steve Karg <skarg@users.sourceforge.net>
+* Copyright (C) 2009 Steve Karg <skarg@users.sourceforge.net>
 *
 * Permission is hereby granted, free of charge, to any person obtaining
 * a copy of this software and associated documentation files (the
@@ -21,46 +21,40 @@
 * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *********************************************************************/
-#ifndef BACERROR_H
-#define BACERROR_H
+#ifndef TIMER_H
+#define TIMER_H
 
-#include <stdint.h>
 #include <stdbool.h>
-#include "bacenum.h"
+#include <stdint.h>
+#include <sys/time.h>   /* for timeval */
 
-    int bacerror_encode_apdu(
-        uint8_t * apdu,
-        uint8_t invoke_id,
-        BACNET_CONFIRMED_SERVICE service,
-        BACNET_ERROR_CLASS error_class,
-        BACNET_ERROR_CODE error_code);
-
-    int bacerror_decode_service_request(
-        uint8_t * apdu,
-        unsigned apdu_len,
-        uint8_t * invoke_id,
-        BACNET_CONFIRMED_SERVICE * service,
-        BACNET_ERROR_CLASS * error_class,
-        BACNET_ERROR_CODE * error_code);
-
-    int bacerror_decode_error_class_and_code(
-        uint8_t * apdu,
-        unsigned apdu_len,
-        BACNET_ERROR_CLASS * error_class,
-        BACNET_ERROR_CODE * error_code);
-
-#ifdef TEST
-#include "ctest.h"
-    int bacerror_decode_apdu(
-        uint8_t * apdu,
-        unsigned apdu_len,
-        uint8_t * invoke_id,
-        BACNET_CONFIRMED_SERVICE * service,
-        BACNET_ERROR_CLASS * error_class,
-        BACNET_ERROR_CODE * error_code);
-
-    void testBACError(
-        Test * pTest);
+/* Timer Module */
+#ifndef MAX_MILLISECOND_TIMERS
+#define TIMER_SILENCE 0
+#define MAX_MILLISECOND_TIMERS 1
 #endif
+
+    uint32_t timeGetTime(
+        void);
+    void timer_init(
+        void);
+    uint32_t timer_milliseconds(
+        unsigned index);
+    bool timer_elapsed_milliseconds(
+        unsigned index,
+        uint32_t value);
+    bool timer_elapsed_seconds(
+        unsigned index,
+        uint32_t value);
+    bool timer_elapsed_minutes(
+        unsigned index,
+        uint32_t seconds);
+    uint32_t timer_milliseconds_set(
+        unsigned index,
+        uint32_t value);
+    uint32_t timer_reset(
+        unsigned index);
+    uint16_t timer_delta_time(uint32_t startTime) ;
+    uint32_t timer_get_time(void) ;
 
 #endif

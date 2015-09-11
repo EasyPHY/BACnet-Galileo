@@ -42,82 +42,91 @@
 #if PRINT_ENABLED
 #include <stdio.h>      /* for standard i/o, like printing */
 #endif
+#include "CEDebug.h"
+#include "datalink.h"
+
+
+#ifdef _MSC_VER
+extern HANDLE mutexLon;
+#else
+extern pthread_mutex_t mutexLon;
+#endif
+
+
 
 /** @file bip.c  Configuration and Operations for BACnet/IP */
-
-static int BIP_Socket = -1;
-/* port to use - stored in network byte order */
-static uint16_t BIP_Port = 0;   /* this will force initialization in demos */
-/* IP Address - stored in network byte order */
-static struct in_addr BIP_Address;
-/* Broadcast Address - stored in network byte order */
-static struct in_addr BIP_Broadcast_Address;
 
 /** Setter for the BACnet/IP socket handle.
  *
  * @param sock_fd [in] Handle for the BACnet/IP socket.
  */
-void bip_set_socket(
-    int sock_fd)
-{
-    BIP_Socket = sock_fd;
-}
+//void bip_set_socket(
+//    int sock_fd)
+//{
+//    BIP_Socket = sock_fd;
+//}
 
 /** Getter for the BACnet/IP socket handle.
  *
  * @return The handle to the BACnet/IP socket.
  */
-int bip_socket(
-    void)
-{
-    return BIP_Socket;
-}
-
-bool bip_valid(
-    void)
-{
-    return (BIP_Socket != -1);
-}
+//int bip_socket(
+//    void)
+//{
+//    return BIP_Socket;
+//}
+//
+//bool bip_valid(
+//    void)
+//{
+//    return (BIP_Socket != -1);
+//}
 
 void bip_set_addr(
+    PORT_SUPPORT *portParams,
     uint32_t net_address)
 {       /* in network byte order */
-    BIP_Address.s_addr = net_address;
+    // BIP_Address.s_addr = net_address;
+    portParams->bipParams.local_addr = net_address;
 }
 
 /* returns network byte order */
-uint32_t bip_get_addr(
-    void)
+uint32_t bip_get_addr(PORT_SUPPORT *portParams)
 {
-    return BIP_Address.s_addr;
+    // return BIP_Address.s_addr;
+    return portParams->bipParams.local_addr;
 }
 
 void bip_set_broadcast_addr(
+    PORT_SUPPORT *portParams,
     uint32_t net_address)
 {       /* in network byte order */
-    BIP_Broadcast_Address.s_addr = net_address;
+    // BIP_Broadcast_Address.s_addr = net_address;
+    portParams->bipParams.broadcast_addr = net_address;
 }
 
 /* returns network byte order */
 uint32_t bip_get_broadcast_addr(
-    void)
+    PORT_SUPPORT *portParams)
 {
-    return BIP_Broadcast_Address.s_addr;
+    // return BIP_Broadcast_Address.s_addr;
+    return portParams->bipParams.broadcast_addr;
 }
 
 
-void bip_set_port(
-    uint16_t port)
-{       /* in network byte order */
-    BIP_Port = port;
-}
+//void bip_set_port(
+//    uint16_t port)
+//{       /* in network byte order */
+//    BIP_Port = port;
+//}
 
 /* returns network byte order */
-uint16_t bip_get_port(
-    void)
-{
-    return BIP_Port;
-}
+//uint16_t bip_get_port(
+//    void)
+//{
+//    return htons(47808);        // this is a BIG todo !!  -> need to depend on the individually set routerports...
+//    // return BIP_Port;
+//}
 
 static int bip_decode_bip_address(
     BACNET_ADDRESS * bac_addr,

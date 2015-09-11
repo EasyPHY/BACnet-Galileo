@@ -185,6 +185,7 @@ static int RPM_Encode_Property(
  *                          decoded from the APDU header of this message.
  */
 void handler_read_property_multiple(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src,
@@ -451,7 +452,7 @@ void handler_read_property_multiple(
 
     pdu_len = apdu_len + npdu_len;
     bytes_sent =
-        datalink_send_pdu(src, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, src, &npdu_data, &Handler_Transmit_Buffer[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent <= 0) {

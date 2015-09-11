@@ -29,10 +29,6 @@
 #include <stdbool.h>
 #include "bacdef.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     void bacnet_address_copy(
         BACNET_ADDRESS * dest,
         BACNET_ADDRESS * src);
@@ -40,7 +36,6 @@ extern "C" {
         BACNET_ADDRESS * dest,
         BACNET_ADDRESS * src);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+	void set_global_broadcast(BACNET_ADDRESS *dest);
+	void set_local_broadcast(BACNET_ADDRESS *dest);
 #endif

@@ -78,6 +78,7 @@ void handler_get_event_information_set(
 }
 
 void handler_get_event_information(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src,

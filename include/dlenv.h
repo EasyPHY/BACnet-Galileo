@@ -25,12 +25,8 @@
 #ifndef DLENV_H
 #define DLENV_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    void dlenv_init(
-        void);
+//  void dlenv_init(
+//      void);
     int dlenv_register_as_foreign_device(
         void);
     void dlenv_maintenance_timer(
@@ -46,7 +42,4 @@ extern "C" {
     int dlenv_bbmd_result(
         void);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

@@ -34,9 +34,6 @@
 #include "bacreal.h"
 #include "bits.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
 /* from clause 20.2.1 General Rules for Encoding BACnet Tags */
 /* returns the number of apdu bytes consumed */
@@ -169,19 +166,19 @@ extern "C" {
 /* returns the number of apdu bytes consumed */
     int decode_object_id(
         uint8_t * apdu,
-        uint16_t * object_type,
+		BACNET_OBJECT_TYPE * object_type,
         uint32_t * instance);
 
     int decode_object_id_safe(
         uint8_t * apdu,
         uint32_t len_value,
-        uint16_t * object_type,
+		BACNET_OBJECT_TYPE * object_type,
         uint32_t * instance);
 
     int decode_context_object_id(
         uint8_t * apdu,
         uint8_t tag_number,
-        uint16_t * object_type,
+        BACNET_OBJECT_TYPE * object_type,
         uint32_t * instance);
 
     int encode_bacnet_object_id(
@@ -418,8 +415,4 @@ extern "C" {
 #define IS_CLOSING_TAG(x) ((x & 0x07) == 7)
 
 
-#ifdef __cplusplus
-
-}
-#endif /* __cplusplus */
 #endif

@@ -181,7 +181,9 @@ int rpm_ack_decode_service_request(
                 }
             }
             old_rpm_property = rpm_property;
-            rpm_property = calloc(1, sizeof(BACNET_PROPERTY_REFERENCE));
+            rpm_property =
+                (BACNET_PROPERTY_REFERENCE *) calloc(1,
+                sizeof(BACNET_PROPERTY_REFERENCE));
             old_rpm_property->next = rpm_property;
         }
         len = rpm_decode_object_end(apdu, apdu_len);
@@ -192,7 +194,9 @@ int rpm_ack_decode_service_request(
         }
         if (apdu_len) {
             old_rpm_object = rpm_object;
-            rpm_object = calloc(1, sizeof(BACNET_READ_ACCESS_DATA));
+            rpm_object =
+                (BACNET_READ_ACCESS_DATA *) calloc(1,
+                sizeof(BACNET_READ_ACCESS_DATA));
             old_rpm_object->next = rpm_object;
         }
     }

@@ -48,10 +48,6 @@ typedef struct {
 
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     int bacapp_encode_device_obj_property_ref(
         uint8_t * apdu,
         BACNET_DEVICE_OBJECT_PROPERTY_REFERENCE * value);
@@ -90,7 +86,4 @@ extern "C" {
         BACNET_DEVICE_OBJECT_REFERENCE * value);
 
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

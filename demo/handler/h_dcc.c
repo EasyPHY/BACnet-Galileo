@@ -88,6 +88,7 @@ void handler_dcc_password_set(
  *                          decoded from the APDU header of this message.
  */
 void handler_device_communication_control(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src,

@@ -50,6 +50,7 @@
  *                          decoded from the APDU header of this message.
  */
 void handler_unrecognized_service(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src,
@@ -77,7 +78,7 @@ void handler_unrecognized_service(
     pdu_len += len;
     /* send the data */
     bytes_sent =
-        datalink_send_pdu(src, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, src, &npdu_data, &Handler_Transmit_Buffer[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent > 0) {

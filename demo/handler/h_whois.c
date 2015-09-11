@@ -35,7 +35,7 @@
 #include "iam.h"
 #include "device.h"
 
-#include "client.h"
+//#include "client.h"
 #include "txbuf.h"
 #include "handlers.h"
 
@@ -48,6 +48,7 @@
  * @param src [in] The BACNET_ADDRESS of the message's source (ignored).
  */
 void handler_who_is(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src)
@@ -61,7 +62,7 @@ void handler_who_is(
         whois_decode_service_request(service_request, service_len, &low_limit,
         &high_limit);
     if (len == 0) {
-        Send_I_Am(&Handler_Transmit_Buffer[0]);
+        Send_I_Am(portParams, &Handler_Transmit_Buffer[0]);
     } else if (len != BACNET_STATUS_ERROR) {
         /* is my device id within the limits? */
         /* or */
@@ -71,7 +72,7 @@ void handler_who_is(
             ||
             ((BACNET_MAX_INSTANCE >= (uint32_t) low_limit) &&
                 (BACNET_MAX_INSTANCE <= (uint32_t) high_limit))) {
-            Send_I_Am(&Handler_Transmit_Buffer[0]);
+            Send_I_Am(portParams, &Handler_Transmit_Buffer[0]);
         }
     }
 
@@ -86,6 +87,7 @@ void handler_who_is(
  *                 response will be sent back to.
  */
 void handler_who_is_unicast(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src)
@@ -99,7 +101,7 @@ void handler_who_is_unicast(
         &high_limit);
     /* If no limits, then always respond */
     if (len == 0)
-        Send_I_Am_Unicast(&Handler_Transmit_Buffer[0], src);
+        Send_I_Am_Unicast(portParams, &Handler_Transmit_Buffer[0], src);
     else if (len != BACNET_STATUS_ERROR) {
         /* is my device id within the limits? */
         if (((Device_Object_Instance_Number() >= (uint32_t) low_limit) &&
@@ -108,7 +110,7 @@ void handler_who_is_unicast(
             /* BACnet wildcard is the max instance number - everyone responds */
             ((BACNET_MAX_INSTANCE >= (uint32_t) low_limit) &&
                 (BACNET_MAX_INSTANCE <= (uint32_t) high_limit)))
-            Send_I_Am_Unicast(&Handler_Transmit_Buffer[0], src);
+            Send_I_Am_Unicast(portParams, &Handler_Transmit_Buffer[0], src);
     }
 
     return;

@@ -34,10 +34,6 @@ typedef struct BACnet_Private_Transfer_Data {
     int serviceParametersLen;
 } BACNET_PRIVATE_TRANSFER_DATA;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     int ptransfer_encode_apdu(
         uint8_t * apdu,
         uint8_t invoke_id,
@@ -80,7 +76,4 @@ extern "C" {
         Test * pTest);
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

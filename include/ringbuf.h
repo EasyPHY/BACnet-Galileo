@@ -39,9 +39,6 @@ struct ring_buffer_t {
 };
 typedef struct ring_buffer_t RING_BUFFER;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
     unsigned Ringbuf_Count(
         RING_BUFFER const *b);
@@ -77,7 +74,4 @@ extern "C" {
         Test * pTest);
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

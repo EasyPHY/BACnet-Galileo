@@ -27,16 +27,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "bacstr.h"
+#include "datalink.h"
 
 typedef struct BACnet_I_Have_Data {
     BACNET_OBJECT_ID device_id;
     BACNET_OBJECT_ID object_id;
     BACNET_CHARACTER_STRING object_name;
 } BACNET_I_HAVE_DATA;
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
     int ihave_encode_apdu(
         uint8_t * apdu,
@@ -52,13 +49,17 @@ extern "C" {
         unsigned apdu_len,
         BACNET_I_HAVE_DATA * data);
 
+	void Send_I_Have(
+        PORT_SUPPORT *portParams,
+        uint32_t device_id,
+		BACNET_OBJECT_TYPE object_type,
+		uint32_t object_instance,
+		BACNET_CHARACTER_STRING * object_name);
+
 #ifdef TEST
 #include "ctest.h"
     void testIHave(
         Test * pTest);
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

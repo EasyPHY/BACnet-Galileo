@@ -29,6 +29,7 @@
 #include <stddef.h>
 #include "bacdef.h"
 #include "npdu.h"
+#include "datalink.h"
 
 /* note: TSM functionality is optional - only needed if we are
    doing client requests */
@@ -85,10 +86,6 @@ typedef void (
     uint8_t invoke_id);
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     void tsm_set_timeout_handler(
         tsm_timeout_function pFunction);
 
@@ -97,6 +94,7 @@ extern "C" {
     uint8_t tsm_transaction_idle_count(
         void);
     void tsm_timer_milliseconds(
+        PORT_SUPPORT *portParams,
         uint16_t milliseconds);
 /* free the invoke ID when the reply comes back */
     void tsm_free_invoke_id(
@@ -126,9 +124,6 @@ extern "C" {
     bool tsm_invoke_id_failed(
         uint8_t invokeID);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 /* define out any functions necessary for compile */
 #endif
 #endif

@@ -34,10 +34,7 @@
 
 struct sockaddr_in;     /* Defined elsewhere, needed here. */
 
-#ifdef __cplusplus
-extern "C" {
 
-#endif /* __cplusplus */
 
 #if defined(BBMD_ENABLED) && BBMD_ENABLED
     void bvlc_maintenance_timer(
@@ -165,7 +162,5 @@ extern "C" {
      */
     void bvlc_disable_nat(void);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+
 #endif /* */

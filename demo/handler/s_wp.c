@@ -47,6 +47,7 @@
 
 /** returns the invoke ID for confirmed request, or zero on failure */
 uint8_t Send_Write_Property_Request_Data(
+    PORT_SUPPORT *portParams,
     uint32_t device_id,
     BACNET_OBJECT_TYPE object_type,
     uint32_t object_instance,
@@ -142,6 +143,7 @@ uint8_t Send_Write_Property_Request_Data(
  * @return invoke id of outgoing message, or 0 on failure.
  */
 uint8_t Send_Write_Property_Request(
+    PORT_SUPPORT *portParams,
     uint32_t device_id,
     BACNET_OBJECT_TYPE object_type,
     uint32_t object_instance,

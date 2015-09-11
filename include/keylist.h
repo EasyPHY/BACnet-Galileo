@@ -43,10 +43,6 @@ typedef struct Keylist {
 } KEYLIST_TYPE;
 typedef KEYLIST_TYPE *OS_Keylist;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 /* returns head of the list or NULL on failure. */
     OS_Keylist Keylist_Create(
         void);
@@ -103,7 +99,4 @@ extern "C" {
     int Keylist_Count(
         OS_Keylist list);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif

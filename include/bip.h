@@ -39,9 +39,6 @@
 
 extern bool BIP_Debug;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
     /* note: define init, set_interface, and cleanup in your port */
     /* on Linux, ifname is eth0, ath0, arc0, and others.
@@ -90,17 +87,19 @@ extern "C" {
 
     /* use network byte order for setting */
     void bip_set_addr(
+        PORT_SUPPORT *portParams,
         uint32_t net_address);
     /* returns network byte order */
     uint32_t bip_get_addr(
-        void);
+        PORT_SUPPORT *portParams);
 
     /* use network byte order for setting */
     void bip_set_broadcast_addr(
+        PORT_SUPPORT *portParams,
         uint32_t net_address);
     /* returns network byte order */
     uint32_t bip_get_broadcast_addr(
-        void);
+        PORT_SUPPORT *portParams);
 
     /* gets an IP address by name, where name can be a
        string that is an IP address in dotted form, or
@@ -111,15 +110,5 @@ extern "C" {
         const char *host_name);
 
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-/** @defgroup DLBIP BACnet/IP DataLink Network Layer
- * @ingroup DataLink
- * Implementation of the Network Layer using BACnet/IP as the transport, as
- * described in Annex J.
- * The functions described here fulfill the roles defined generically at the
- * DataLink level by serving as the implementation of the function templates.
- *
- */
+
 #endif

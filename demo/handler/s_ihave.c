@@ -54,6 +54,7 @@
  * @param object_name [in] The Name of the Object I Have.
  */
 void Send_I_Have(
+    PORT_SUPPORT *portParams,
     uint32_t device_id,
     BACNET_OBJECT_TYPE object_type,
     uint32_t object_instance,
@@ -72,7 +73,7 @@ void Send_I_Have(
     if (!dcc_communication_enabled())
         return;
     /* Who-Has is a global broadcast */
-    datalink_get_broadcast_address(&dest);
+    portParams->get_broadcast_address(portParams, &dest);
     /* encode the NPDU portion of the packet */
     npdu_encode_npdu_data(&npdu_data, false, MESSAGE_PRIORITY_NORMAL);
     pdu_len =
@@ -89,7 +90,7 @@ void Send_I_Have(
     pdu_len += len;
     /* send the data */
     bytes_sent =
-        datalink_send_pdu(&dest, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, &dest, &npdu_data, &Handler_Transmit_Buffer[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent <= 0) {

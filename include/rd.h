@@ -39,10 +39,6 @@ typedef bool(
     BACNET_REINITIALIZE_DEVICE_DATA * rd_data);
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 /* encode service */
     int rd_encode_apdu(
         uint8_t * apdu,
@@ -70,9 +66,6 @@ extern "C" {
         Test * pTest);
 #endif
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 /** @defgroup DMRD Device Management-ReinitializeDevice (DM-RD)
  * @ingroup RDMS
  * 16.4 ReinitializeDevice Service <br>

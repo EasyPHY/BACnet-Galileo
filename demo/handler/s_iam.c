@@ -50,6 +50,7 @@
  * @return The length of the message in buffer[].
  */
 int iam_encode_pdu(
+    PORT_SUPPORT *portParams,
     uint8_t * buffer,
     BACNET_ADDRESS * dest,
     BACNET_NPDU_DATA * npdu_data)
@@ -59,7 +60,7 @@ int iam_encode_pdu(
     BACNET_ADDRESS my_address;
     datalink_get_my_address(&my_address);
 
-    datalink_get_broadcast_address(dest);
+    portParams->get_broadcast_address(portParams, dest);
     /* encode the NPDU portion of the packet */
     npdu_encode_npdu_data(npdu_data, false, MESSAGE_PRIORITY_NORMAL);
     pdu_len = npdu_encode_pdu(&buffer[0], dest, &my_address, npdu_data);
@@ -79,6 +80,7 @@ int iam_encode_pdu(
  * @param buffer [in] The buffer to use for building and sending the message.
  */
 void Send_I_Am(
+    PORT_SUPPORT *portParams,
     uint8_t * buffer)
 {
     int pdu_len = 0;
@@ -99,9 +101,9 @@ void Send_I_Am(
 #endif
 
     /* encode the data */
-    pdu_len = iam_encode_pdu(buffer, &dest, &npdu_data);
+    pdu_len = iam_encode_pdu(portParams, buffer, &dest, &npdu_data);
     /* send data */
-    bytes_sent = datalink_send_pdu(&dest, &npdu_data, &buffer[0], pdu_len);
+    bytes_sent = portParams->SendPdu(portParams, &dest, &npdu_data, &buffer[0], pdu_len);
 
 #if PRINT_ENABLED
     if (bytes_sent <= 0) {
@@ -122,6 +124,7 @@ void Send_I_Am(
  * @return The length of the message in buffer[].
  */
 int iam_unicast_encode_pdu(
+    const PORT_SUPPORT *portParams,
     uint8_t * buffer,
     BACNET_ADDRESS * src,
     BACNET_ADDRESS * dest,
@@ -160,8 +163,9 @@ int iam_unicast_encode_pdu(
  * @param src [in] The source address information from service handler.
  */
 void Send_I_Am_Unicast(
+    PORT_SUPPORT *portSupport,
     uint8_t * buffer,
-    BACNET_ADDRESS * src)
+    BACNET_ADDRESS *dest )
 {
     int pdu_len = 0;
     BACNET_ADDRESS dest;
@@ -181,9 +185,9 @@ void Send_I_Am_Unicast(
 #endif
 
     /* encode the data */
-    pdu_len = iam_unicast_encode_pdu(buffer, src, &dest, &npdu_data);
+    pdu_len = iam_unicast_encode_pdu(portSupport, buffer, dest, &npdu_data);
     /* send data */
-    bytes_sent = datalink_send_pdu(&dest, &npdu_data, &buffer[0], pdu_len);
+    portSupport->SendPdu(portSupport, dest, &npdu_data, &buffer[0], pdu_len);
 
 #if PRINT_ENABLED
     if (bytes_sent <= 0)

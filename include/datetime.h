@@ -58,10 +58,6 @@ typedef struct BACnet_DateTime {
     BACNET_TIME time;
 } BACNET_DATE_TIME;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
     /* utility initialization functions */
     void datetime_set_date(
         BACNET_DATE * bdate,
@@ -185,7 +181,4 @@ extern "C" {
         uint8_t tag_number,
         BACNET_DATE_TIME * value);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 #endif /* DATE_TIME_H */

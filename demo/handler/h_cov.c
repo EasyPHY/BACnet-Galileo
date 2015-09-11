@@ -64,7 +64,7 @@ typedef struct BACnet_COV_Subscription_Flags {
 
 typedef struct BACnet_COV_Subscription {
     BACNET_COV_SUBSCRIPTION_FLAGS flag;
-    uint8_t dest_index;
+    int8_t dest_index;      // Has to be signed, tested for < 0 in places.. EKH todo, feedback Karg? todonext2
     uint8_t invokeID;   /* for confirmed COV */
     uint32_t subscriberProcessIdentifier;
     uint32_t lifetime;  /* optional */
@@ -79,6 +79,10 @@ static BACNET_COV_SUBSCRIPTION COV_Subscriptions[MAX_COV_SUBCRIPTIONS];
 #define MAX_COV_ADDRESSES 16
 #endif
 static BACNET_COV_ADDRESS COV_Addresses[MAX_COV_ADDRESSES];
+
+#if ( MAX_COV_ADDRESSES > 127 )
+#error This array is indexed by a int8_t. Change the use of the index if more than 127 addresses are required.
+#endif
 
 /**
 * Gets the address from the list of COV addresses
@@ -444,6 +448,7 @@ static bool cov_list_subscribe(
 }
 
 static bool cov_send_request(
+    PORT_SUPPORT *portParams,
     BACNET_COV_SUBSCRIPTION * cov_subscription,
     BACNET_PROPERTY_VALUE * value_list)
 {
@@ -608,7 +613,8 @@ void handler_cov_timer_seconds(
 }
 
 void handler_cov_task(
-    void)
+    PORT_SUPPORT *portParams,
+    )
 {
     static int index = 0;
     BACNET_OBJECT_TYPE object_type = MAX_BACNET_OBJECT_TYPE;
@@ -720,7 +726,7 @@ void handler_cov_task(
                     (void) Device_Encode_Value_List(object_type,
                         object_instance, &value_list[0]);
                     status =
-                        cov_send_request(&COV_Subscriptions[index],
+                        cov_send_request( Handler_Transmit_Buffer, &COV_Subscriptions[index],
                         &value_list[0]);
                     if (status) {
                         COV_Subscriptions[index].flag.send_requested = false;
@@ -789,6 +795,7 @@ static bool cov_subscribe(
  *                          decoded from the APDU header of this message.
  */
 void handler_cov_subscribe(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src,
