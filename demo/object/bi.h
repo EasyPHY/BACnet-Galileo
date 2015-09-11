@@ -28,7 +28,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "bacdef.h"
-#include "cov.h"
 #include "rp.h"
 #include "wp.h"
 

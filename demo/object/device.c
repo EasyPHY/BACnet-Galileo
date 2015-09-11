@@ -36,16 +36,15 @@
 #include "bacapp.h"
 #include "config.h"     /* the custom stuff */
 #include "apdu.h"
-#include "wp.h" /* WriteProperty handling */
-#include "rp.h" /* ReadProperty handling */
+#include "wp.h"         /* WriteProperty handling */
+#include "rp.h"         /* ReadProperty handling */
 #include "dcc.h"        /* DeviceCommunicationControl handling */
 #include "version.h"
 #include "device.h"     /* me */
 #include "handlers.h"
-#include "datalink.h"
+#include "multiport.h"
 #include "address.h"
 /* os specfic includes */
-#include "timer.h"
 /* include the device object */
 #include "device.h"
 #include "ai.h"
@@ -54,32 +53,6 @@
 #include "bi.h"
 #include "bo.h"
 #include "bv.h"
-#include "channel.h"
-#include "command.h"
-#include "csv.h"
-#include "iv.h"
-#include "lc.h"
-#include "lsp.h"
-#include "ms-input.h"
-#include "mso.h"
-#include "msv.h"
-#include "trendlog.h"
-#if defined(INTRINSIC_REPORTING)
-#include "nc.h"
-#endif /* defined(INTRINSIC_REPORTING) */
-#if defined(BACFILE)
-#include "bacfile.h"
-#endif /* defined(BACFILE) */
-#if defined(BAC_UCI)
-#include "ucix.h"
-#endif /* defined(BAC_UCI) */
-
-
-#if defined(__BORLANDC__)
-/* seems to not be defined in time.h as specified by The Open Group */
-/* difference from UTC and local standard time  */
-long int timezone;
-#endif
 
 /* local forward (semi-private) and external prototypes */
 int Device_Read_Property_Local(
@@ -200,205 +173,6 @@ static object_functions_t My_Object_Table[] = {
             NULL /* COV */ ,
             NULL /* COV Clear */ ,
         NULL /* Intrinsic Reporting */ },
-    {OBJECT_CHARACTERSTRING_VALUE,
-            CharacterString_Value_Init,
-            CharacterString_Value_Count,
-            CharacterString_Value_Index_To_Instance,
-            CharacterString_Value_Valid_Instance,
-            CharacterString_Value_Object_Name,
-            CharacterString_Value_Read_Property,
-            CharacterString_Value_Write_Property,
-            CharacterString_Value_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_COMMAND,
-            Command_Init,
-            Command_Count,
-            Command_Index_To_Instance,
-            Command_Valid_Instance,
-            Command_Object_Name,
-            Command_Read_Property,
-            Command_Write_Property,
-            Command_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_INTEGER_VALUE,
-            Integer_Value_Init,
-            Integer_Value_Count,
-            Integer_Value_Index_To_Instance,
-            Integer_Value_Valid_Instance,
-            Integer_Value_Object_Name,
-            Integer_Value_Read_Property,
-            Integer_Value_Write_Property,
-            Integer_Value_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-#if defined(INTRINSIC_REPORTING)
-    {OBJECT_NOTIFICATION_CLASS,
-            Notification_Class_Init,
-            Notification_Class_Count,
-            Notification_Class_Index_To_Instance,
-            Notification_Class_Valid_Instance,
-            Notification_Class_Object_Name,
-            Notification_Class_Read_Property,
-            Notification_Class_Write_Property,
-            Notification_Class_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-#endif
-    {OBJECT_LIFE_SAFETY_POINT,
-            Life_Safety_Point_Init,
-            Life_Safety_Point_Count,
-            Life_Safety_Point_Index_To_Instance,
-            Life_Safety_Point_Valid_Instance,
-            Life_Safety_Point_Object_Name,
-            Life_Safety_Point_Read_Property,
-            Life_Safety_Point_Write_Property,
-            Life_Safety_Point_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_LOAD_CONTROL,
-            Load_Control_Init,
-            Load_Control_Count,
-            Load_Control_Index_To_Instance,
-            Load_Control_Valid_Instance,
-            Load_Control_Object_Name,
-            Load_Control_Read_Property,
-            Load_Control_Write_Property,
-            Load_Control_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_MULTI_STATE_INPUT,
-            Multistate_Input_Init,
-            Multistate_Input_Count,
-            Multistate_Input_Index_To_Instance,
-            Multistate_Input_Valid_Instance,
-            Multistate_Input_Object_Name,
-            Multistate_Input_Read_Property,
-            Multistate_Input_Write_Property,
-            Multistate_Input_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_MULTI_STATE_OUTPUT,
-            Multistate_Output_Init,
-            Multistate_Output_Count,
-            Multistate_Output_Index_To_Instance,
-            Multistate_Output_Valid_Instance,
-            Multistate_Output_Object_Name,
-            Multistate_Output_Read_Property,
-            Multistate_Output_Write_Property,
-            Multistate_Output_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_MULTI_STATE_VALUE,
-            Multistate_Value_Init,
-            Multistate_Value_Count,
-            Multistate_Value_Index_To_Instance,
-            Multistate_Value_Valid_Instance,
-            Multistate_Value_Object_Name,
-            Multistate_Value_Read_Property,
-            Multistate_Value_Write_Property,
-            Multistate_Value_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_TRENDLOG,
-            Trend_Log_Init,
-            Trend_Log_Count,
-            Trend_Log_Index_To_Instance,
-            Trend_Log_Valid_Instance,
-            Trend_Log_Object_Name,
-            Trend_Log_Read_Property,
-            Trend_Log_Write_Property,
-            Trend_Log_Property_Lists,
-            TrendLogGetRRInfo,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_LIGHTING_OUTPUT,
-            Lighting_Output_Init,
-            Lighting_Output_Count,
-            Lighting_Output_Index_To_Instance,
-            Lighting_Output_Valid_Instance,
-            Lighting_Output_Object_Name,
-            Lighting_Output_Read_Property,
-            Lighting_Output_Write_Property,
-            Lighting_Output_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-    {OBJECT_CHANNEL,
-            Channel_Init,
-            Channel_Count,
-            Channel_Index_To_Instance,
-            Channel_Valid_Instance,
-            Channel_Object_Name,
-            Channel_Read_Property,
-            Channel_Write_Property,
-            Channel_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-#if defined(BACFILE)
-    {OBJECT_FILE,
-            bacfile_init,
-            bacfile_count,
-            bacfile_index_to_instance,
-            bacfile_valid_instance,
-            bacfile_object_name,
-            bacfile_read_property,
-            bacfile_write_property,
-            BACfile_Property_Lists,
-            NULL /* ReadRangeInfo */ ,
-            NULL /* Iterator */ ,
-            NULL /* Value_Lists */ ,
-            NULL /* COV */ ,
-            NULL /* COV Clear */ ,
-        NULL /* Intrinsic Reporting */ },
-#endif
     {MAX_BACNET_OBJECT_TYPE,
             NULL /* Init */ ,
             NULL /* Count */ ,
@@ -1432,9 +1206,6 @@ int Device_Read_Property_Local(
                 encode_application_unsigned(&apdu[0], dlmstp_max_master());
             break;
 #endif
-        case PROP_ACTIVE_COV_SUBSCRIPTIONS:
-            apdu_len = handler_cov_encode_subscriptions(&apdu[0], apdu_max);
-            break;
         default:
             rpdata->error_class = ERROR_CLASS_PROPERTY;
             rpdata->error_code = ERROR_CODE_UNKNOWN_PROPERTY;
@@ -1983,102 +1754,3 @@ void Routing_Device_Init(
 #endif /* BAC_ROUTING */
 
 
-#ifdef TEST
-#include <assert.h>
-#include <string.h>
-#include "ctest.h"
-
-bool WPValidateArgType(
-    BACNET_APPLICATION_DATA_VALUE * pValue,
-    uint8_t ucExpectedTag,
-    BACNET_ERROR_CLASS * pErrorClass,
-    BACNET_ERROR_CODE * pErrorCode)
-{
-    pValue = pValue;
-    ucExpectedTag = ucExpectedTag;
-    pErrorClass = pErrorClass;
-    pErrorCode = pErrorCode;
-
-    return false;
-}
-
-bool WPValidateString(
-    BACNET_APPLICATION_DATA_VALUE * pValue,
-    int iMaxLen,
-    bool bEmptyAllowed,
-    BACNET_ERROR_CLASS * pErrorClass,
-    BACNET_ERROR_CODE * pErrorCode)
-{
-    pValue = pValue;
-    iMaxLen = iMaxLen;
-    bEmptyAllowed = bEmptyAllowed;
-    pErrorClass = pErrorClass;
-    pErrorCode = pErrorCode;
-
-    return false;
-}
-
-int handler_cov_encode_subscriptions(
-    uint8_t * apdu,
-    int max_apdu)
-{
-    apdu = apdu;
-    max_apdu = max_apdu;
-
-    return 0;
-}
-
-void testDevice(
-    Test * pTest)
-{
-    bool status = false;
-    const char *name = "Patricia";
-
-    status = Device_Set_Object_Instance_Number(0);
-    ct_test(pTest, Device_Object_Instance_Number() == 0);
-    ct_test(pTest, status == true);
-    status = Device_Set_Object_Instance_Number(BACNET_MAX_INSTANCE);
-    ct_test(pTest, Device_Object_Instance_Number() == BACNET_MAX_INSTANCE);
-    ct_test(pTest, status == true);
-    status = Device_Set_Object_Instance_Number(BACNET_MAX_INSTANCE / 2);
-    ct_test(pTest,
-        Device_Object_Instance_Number() == (BACNET_MAX_INSTANCE / 2));
-    ct_test(pTest, status == true);
-    status = Device_Set_Object_Instance_Number(BACNET_MAX_INSTANCE + 1);
-    ct_test(pTest,
-        Device_Object_Instance_Number() != (BACNET_MAX_INSTANCE + 1));
-    ct_test(pTest, status == false);
-
-
-    Device_Set_System_Status(STATUS_NON_OPERATIONAL, true);
-    ct_test(pTest, Device_System_Status() == STATUS_NON_OPERATIONAL);
-
-    ct_test(pTest, Device_Vendor_Identifier() == BACNET_VENDOR_ID);
-
-    Device_Set_Model_Name(name, strlen(name));
-    ct_test(pTest, strcmp(Device_Model_Name(), name) == 0);
-
-    return;
-}
-
-#ifdef TEST_DEVICE
-int main(
-    void)
-{
-    Test *pTest;
-    bool rc;
-
-    pTest = ct_create("BACnet Device", NULL);
-    /* individual tests */
-    rc = ct_addTestFunction(pTest, testDevice);
-    assert(rc);
-
-    ct_setStream(pTest, stdout);
-    ct_run(pTest);
-    (void) ct_report(pTest);
-    ct_destroy(pTest);
-
-    return 0;
-}
-#endif /* TEST_DEVICE */
-#endif /* TEST */

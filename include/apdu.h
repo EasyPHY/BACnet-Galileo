@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include "bacdef.h"
 #include "bacenum.h"
-#include "datalink.h"
+#include "multiport.h"
 
 typedef struct _confirmed_service_data {
     bool segmented_message;

@@ -86,7 +86,7 @@ typedef struct router_port_t {
         BACNET_NPDU_DATA * npdu_data);
 
 void init_common_npdu (
-	BACNET_NPCI_DATA * npdu_data,
+	BACNET_NPDU_DATA * npdu_data,
 	bool data_expecting_reply );
 
 #endif

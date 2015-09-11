@@ -30,7 +30,6 @@
 #include "bacdef.h"
 #include "bacstr.h"
 #include "datetime.h"
-#include "lighting.h"
 
 struct BACnet_Application_Data_Value;
 typedef struct BACnet_Application_Data_Value {
@@ -74,9 +73,6 @@ typedef struct BACnet_Application_Data_Value {
 #endif
 #if defined (BACAPP_OBJECT_ID)
         BACNET_OBJECT_ID Object_Id;
-#endif
-#if defined (BACAPP_LIGHTING_COMMAND)
-        BACNET_LIGHTING_COMMAND Lighting_Command;
 #endif
     } type;
     /* simple linked list if needed */

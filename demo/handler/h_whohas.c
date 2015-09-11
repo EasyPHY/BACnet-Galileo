@@ -28,12 +28,11 @@
 #include <string.h>
 #include <errno.h>
 #include "config.h"
-#include "txbuf.h"
 #include "bacdef.h"
 #include "bacdcode.h"
 #include "whohas.h"
 #include "device.h"
-#include "client.h"
+//#include "client.h"
 #include "handlers.h"
 
 /** @file h_whohas.c  Handles Who-Has requests. */

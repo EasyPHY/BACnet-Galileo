@@ -28,7 +28,6 @@
 #include <string.h>
 #include <errno.h>
 #include "config.h"
-#include "txbuf.h"
 #include "bacdef.h"
 #include "bacdcode.h"
 #include "bacerror.h"
@@ -88,6 +87,7 @@ static int Encode_RR_payload(
 }
 
 void handler_read_range(
+    PORT_SUPPORT *portParams,
     uint8_t * service_request,
     uint16_t service_len,
     BACNET_ADDRESS * src,
@@ -99,20 +99,20 @@ void handler_read_range(
     BACNET_NPDU_DATA npdu_data;
     bool error = false;
     int bytes_sent = 0;
-    BACNET_ADDRESS my_address;
+    // BACNET_ADDRESS my_address;
 
     data.error_class = ERROR_CLASS_OBJECT;
     data.error_code = ERROR_CODE_UNKNOWN_OBJECT;
     /* encode the NPDU portion of the packet */
-    datalink_get_my_address(&my_address);
+    // datalink_get_my_address(&my_address);
     npdu_encode_npdu_data(&npdu_data, false, MESSAGE_PRIORITY_NORMAL);
     pdu_len =
-        npdu_encode_pdu(&Handler_Transmit_Buffer[0], src, &my_address,
+        npdu_encode_pdu(&portParams->txBuf[0], src, &portParams->myAddress,
         &npdu_data);
     if (service_data->segmented_message) {
         /* we don't support segmentation - send an abort */
         len =
-            abort_encode_apdu(&Handler_Transmit_Buffer[pdu_len],
+            abort_encode_apdu(&portParams->txBuf[pdu_len],
             service_data->invoke_id, ABORT_REASON_SEGMENTATION_NOT_SUPPORTED,
             true);
 #if PRINT_ENABLED
@@ -129,7 +129,7 @@ void handler_read_range(
     if (len < 0) {
         /* bad decoding - send an abort */
         len =
-            abort_encode_apdu(&Handler_Transmit_Buffer[pdu_len],
+            abort_encode_apdu(&portParams->txBuf[pdu_len],
             service_data->invoke_id, ABORT_REASON_OTHER, true);
 #if PRINT_ENABLED
         fprintf(stderr, "RR: Bad Encoding.  Sending Abort!\n");
@@ -146,7 +146,7 @@ void handler_read_range(
         data.application_data_len = len;
         /* FIXME: probably need a length limitation sent with encode */
         len =
-            rr_ack_encode_apdu(&Handler_Transmit_Buffer[pdu_len],
+            rr_ack_encode_apdu(&portParams->txBuf[pdu_len],
             service_data->invoke_id, &data);
 #if PRINT_ENABLED
         fprintf(stderr, "RR: Sending Ack!\n");
@@ -157,7 +157,7 @@ void handler_read_range(
         if (len == -2) {
             /* BACnet APDU too small to fit data, so proper response is Abort */
             len =
-                abort_encode_apdu(&Handler_Transmit_Buffer[pdu_len],
+                abort_encode_apdu(&portParams->txBuf[pdu_len],
                 service_data->invoke_id,
                 ABORT_REASON_SEGMENTATION_NOT_SUPPORTED, true);
 #if PRINT_ENABLED
@@ -165,7 +165,7 @@ void handler_read_range(
 #endif
         } else {
             len =
-                bacerror_encode_apdu(&Handler_Transmit_Buffer[pdu_len],
+                bacerror_encode_apdu(&portParams->txBuf[pdu_len],
                 service_data->invoke_id, SERVICE_CONFIRMED_READ_RANGE,
                 data.error_class, data.error_code);
 #if PRINT_ENABLED
@@ -176,7 +176,7 @@ void handler_read_range(
   RR_ABORT:
     pdu_len += len;
     bytes_sent =
-        datalink_send_pdu(src, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, src, &npdu_data, &portParams->txBuf[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent <= 0)

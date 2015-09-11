@@ -37,10 +37,8 @@
 #include "rpm.h"
 #include "wp.h"
 #include "readrange.h"
-#include "getevent.h"
-#include "get_alarm_sum.h"
 #include "alarm_ack.h"
-#include "datalink.h"
+#include "multiport.h"
 
     void handler_unrecognized_service(
         PORT_SUPPORT *portParams, 
@@ -230,8 +228,6 @@
     /* print the RP Ack data to stdout */
     void rp_ack_print_data(
         BACNET_READ_PROPERTY_DATA * data);
-    /* print the GE Ack data to stdout */
-    void ge_ack_print_data(BACNET_GET_EVENT_INFORMATION_DATA * data, uint32_t device_id);
     /* print the RPM Ack data to stdout */
     void rpm_ack_print_data(
         BACNET_READ_ACCESS_DATA * rpm_data);
@@ -243,8 +239,7 @@
         BACNET_ADDRESS * src,
         BACNET_CONFIRMED_SERVICE_DATA * service_data);
     void handler_cov_task(
-            PORT_SUPPORT *portParams,
-);
+            PORT_SUPPORT *portParams );
     void handler_cov_timer_seconds(
         uint32_t elapsed_seconds);
     void handler_cov_init(
@@ -302,6 +297,7 @@
         BACNET_PRIVATE_TRANSFER_DATA *private_data);
 
     void handler_read_range(
+        PORT_SUPPORT *portParams,
         uint8_t * service_request,
         uint16_t service_len,
         BACNET_ADDRESS * src,
@@ -312,40 +308,6 @@
         uint16_t service_len,
         BACNET_ADDRESS * src,
         BACNET_CONFIRMED_SERVICE_ACK_DATA * service_data);
-
-    void handler_get_event_information_set(
-        BACNET_OBJECT_TYPE object_type,
-        get_event_info_function pFunction);
-
-    void handler_get_event_information(
-    PORT_SUPPORT *portParams,
-        uint8_t * service_request,
-        uint16_t service_len,
-        BACNET_ADDRESS * src,
-        BACNET_CONFIRMED_SERVICE_DATA * service_data);
-
-    void handler_get_alarm_summary_set(
-        BACNET_OBJECT_TYPE object_type,
-        get_alarm_summary_function pFunction);
-
-    void handler_get_alarm_summary(
-    PORT_SUPPORT *portParams,
-        uint8_t * service_request,
-        uint16_t service_len,
-        BACNET_ADDRESS * src,
-        BACNET_CONFIRMED_SERVICE_DATA * service_data);
-
-    void get_alarm_summary_ack_handler(
-        uint8_t * service_request,
-        uint16_t service_len,
-        BACNET_ADDRESS * src,
-        BACNET_CONFIRMED_SERVICE_ACK_DATA * service_data);
-
-    void get_event_ack_handler(
-        uint8_t *service_request,
-        uint16_t service_len,
-        BACNET_ADDRESS *src,
-        BACNET_CONFIRMED_SERVICE_ACK_DATA *service_data);
 
 /** @defgroup MISCHNDLR Miscellaneous Handler Utilities
  * Various utilities and functions to support the Handlers.

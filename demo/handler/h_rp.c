@@ -28,7 +28,6 @@
 #include <string.h>
 #include <errno.h>
 #include "config.h"
-#include "txbuf.h"
 #include "bacdef.h"
 #include "bacdcode.h"
 #include "bacerror.h"
@@ -79,15 +78,15 @@ void handler_read_property(
     BACNET_NPDU_DATA npdu_data;
     bool error = true;  /* assume that there is an error */
     int bytes_sent = 0;
-    BACNET_ADDRESS my_address;
+    // BACNET_ADDRESS my_address;
 
     /* configure default error code as an abort since it is common */
     rpdata.error_code = ERROR_CODE_ABORT_SEGMENTATION_NOT_SUPPORTED;
     /* encode the NPDU portion of the packet */
-    datalink_get_my_address(&my_address);
+    // datalink_get_my_address(&my_address);
     npdu_encode_npdu_data(&npdu_data, false, MESSAGE_PRIORITY_NORMAL);
     npdu_len =
-        npdu_encode_pdu(&Handler_Transmit_Buffer[0], src, &my_address,
+        npdu_encode_pdu(&portParams->txBuf[0], src, &portParams->myAddress,
         &npdu_data);
     if (service_data->segmented_message) {
         /* we don't support segmentation - send an abort */
@@ -118,17 +117,17 @@ void handler_read_property(
     }
 
     apdu_len =
-        rp_ack_encode_apdu_init(&Handler_Transmit_Buffer[npdu_len],
+        rp_ack_encode_apdu_init(&portParams->txBuf[npdu_len],
         service_data->invoke_id, &rpdata);
     /* configure our storage */
-    rpdata.application_data = &Handler_Transmit_Buffer[npdu_len + apdu_len];
+    rpdata.application_data = &portParams->txBuf[npdu_len + apdu_len];
     rpdata.application_data_len =
-        sizeof(Handler_Transmit_Buffer) - (npdu_len + apdu_len);
+        portParams->max_buf - (npdu_len + apdu_len);
     len = Device_Read_Property(&rpdata);
     if (len >= 0) {
         apdu_len += len;
         len =
-            rp_ack_encode_apdu_object_property_end(&Handler_Transmit_Buffer
+            rp_ack_encode_apdu_object_property_end(&portParams->txBuf
             [npdu_len + apdu_len]);
         apdu_len += len;
         if (apdu_len > service_data->max_resp) {
@@ -165,7 +164,7 @@ void handler_read_property(
     if (error) {
         if (len == BACNET_STATUS_ABORT) {
             apdu_len =
-                abort_encode_apdu(&Handler_Transmit_Buffer[npdu_len],
+                abort_encode_apdu(&portParams->txBuf[npdu_len],
                 service_data->invoke_id,
                 abort_convert_error_code(rpdata.error_code), true);
 #if PRINT_ENABLED
@@ -173,7 +172,7 @@ void handler_read_property(
 #endif
         } else if (len == BACNET_STATUS_ERROR) {
             apdu_len =
-                bacerror_encode_apdu(&Handler_Transmit_Buffer[npdu_len],
+                bacerror_encode_apdu(&portParams->txBuf[npdu_len],
                 service_data->invoke_id, SERVICE_CONFIRMED_READ_PROPERTY,
                 rpdata.error_class, rpdata.error_code);
 #if PRINT_ENABLED
@@ -181,7 +180,7 @@ void handler_read_property(
 #endif
         } else if (len == BACNET_STATUS_REJECT) {
             apdu_len =
-                reject_encode_apdu(&Handler_Transmit_Buffer[npdu_len],
+                reject_encode_apdu(&portParams->txBuf[npdu_len],
                 service_data->invoke_id,
                 reject_convert_error_code(rpdata.error_code));
 #if PRINT_ENABLED
@@ -192,7 +191,7 @@ void handler_read_property(
 
     pdu_len = npdu_len + apdu_len;
     bytes_sent =
-        portParams->SendPdu(portParams, src, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, src, &npdu_data, &portParams->txBuf[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent <= 0) {

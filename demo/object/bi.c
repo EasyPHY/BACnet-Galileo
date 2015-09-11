@@ -34,7 +34,6 @@
 #include "bacapp.h"
 #include "rp.h"
 #include "wp.h"
-#include "cov.h"
 #include "config.h"     /* the custom stuff */
 #include "bi.h"
 #include "handlers.h"

@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "bacdef.h"
+#include "multiport.h"
 
     void bacnet_address_copy(
         BACNET_ADDRESS * dest,
@@ -36,6 +37,6 @@
         BACNET_ADDRESS * dest,
         BACNET_ADDRESS * src);
 
-	void set_global_broadcast(BACNET_ADDRESS *dest);
-	void set_local_broadcast(BACNET_ADDRESS *dest);
+    void set_global_broadcast(PORT_SUPPORT *portParams, BACNET_ADDRESS *dest);
+    void set_local_broadcast(PORT_SUPPORT *portParams, BACNET_ADDRESS *dest);
 #endif

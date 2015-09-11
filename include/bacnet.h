@@ -40,16 +40,12 @@
 #include "bacenum.h"
 #include "bacerror.h"
 #include "bactext.h"
-#include "datalink.h"
 #include "indtext.h"
 #include "npdu.h"
 #include "reject.h"
 #include "tsm.h"
 
 /* services */
-#include "arf.h"
-#include "awf.h"
-#include "cov.h"
 #include "dcc.h"
 #include "iam.h"
 #include "ihave.h"
@@ -60,9 +56,6 @@
 #include "whohas.h"
 #include "whois.h"
 #include "wp.h"
-#include "event.h"
-#include "lso.h"
-#include "alarm_ack.h"
 
 /* required object - note: developer must supply the device.c file
    since it is not included in the library.  However, the library
@@ -73,17 +66,12 @@
 #include "ai.h"
 #include "ao.h"
 #include "av.h"
-#include "bacfile.h"
 #include "bi.h"
 #include "bo.h"
 #include "bv.h"
-#include "lc.h"
-#include "lsp.h"
-#include "mso.h"
 
 /* demo handlers */
 #include "txbuf.h"
-#include "client.h"
 #include "handlers.h"
 
 /* Additions for Doxygen documenting */

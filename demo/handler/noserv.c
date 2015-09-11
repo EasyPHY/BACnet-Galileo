@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "txbuf.h"
 #include "bacdef.h"
 #include "bacdcode.h"
 #include "apdu.h"
@@ -60,25 +59,25 @@ void handler_unrecognized_service(
     int pdu_len = 0;
     int bytes_sent = 0;
     BACNET_NPDU_DATA npdu_data;
-    BACNET_ADDRESS my_address;
+    // BACNET_ADDRESS my_address;
 
     (void) service_request;
     (void) service_len;
 
     /* encode the NPDU portion of the packet */
-    datalink_get_my_address(&my_address);
+    // datalink_get_my_address(&my_address);
     npdu_encode_npdu_data(&npdu_data, false, MESSAGE_PRIORITY_NORMAL);
     pdu_len =
-        npdu_encode_pdu(&Handler_Transmit_Buffer[0], src, &my_address,
+        npdu_encode_pdu(&portParams->txBuf[0], src, &portParams->myAddress,
         &npdu_data);
     /* encode the APDU portion of the packet */
     len =
-        reject_encode_apdu(&Handler_Transmit_Buffer[pdu_len],
+        reject_encode_apdu(&portParams->txBuf[pdu_len],
         service_data->invoke_id, REJECT_REASON_UNRECOGNIZED_SERVICE);
     pdu_len += len;
     /* send the data */
     bytes_sent =
-        portParams->SendPdu(portParams, src, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, src, &npdu_data, &portParams->txBuf[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent > 0) {

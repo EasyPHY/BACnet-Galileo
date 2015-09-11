@@ -31,10 +31,9 @@
 #include "config.h"
 #include "bacdef.h"
 #include "apdu.h"
-#include "datalink.h"
+#include "multiport.h"
 #include "handlers.h"
 #include "dlenv.h"
-#include "tsm.h"
 
 /** @file dlenv.c  Initialize the DataLink configuration. */
 

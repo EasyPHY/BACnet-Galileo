@@ -38,6 +38,7 @@
 #include "rp.h"
 #include "rpm.h"
 #include "readrange.h"
+#include "multiport.h"
 
 /** Called so a BACnet object can perform any necessary initialization.
  * @ingroup ObjHelpers

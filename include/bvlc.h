@@ -61,6 +61,7 @@ struct sockaddr_in;     /* Defined elsewhere, needed here. */
         unsigned timeout);      /* number of milliseconds to wait for a packet */
 
     int bvlc_send_pdu(
+        PORT_SUPPORT *portParams,
         BACNET_ADDRESS * dest,  /* destination address */
         BACNET_NPDU_DATA * npdu_data,   /* network information */
         uint8_t * pdu,  /* any data to be sent - may be null */

@@ -30,16 +30,14 @@
 #include "bacdef.h"
 #include "bacdcode.h"
 #include "address.h"
-#include "tsm.h"
 #include "dcc.h"
 #include "npdu.h"
 #include "apdu.h"
 #include "device.h"
-#include "datalink.h"
+#include "multiport.h"
 #include "iam.h"
 /* some demo stuff needed */
 #include "handlers.h"
-#include "client.h"
 
 /** @file s_iam.c  Send an I-Am message. */
 
@@ -57,13 +55,14 @@ int iam_encode_pdu(
 {
     int len = 0;
     int pdu_len = 0;
-    BACNET_ADDRESS my_address;
-    datalink_get_my_address(&my_address);
+    // BACNET_ADDRESS my_address;
+    // datalink_get_my_address(&my_address);
 
-    portParams->get_broadcast_address(portParams, dest);
+    set_global_broadcast(portParams, dest);
+
     /* encode the NPDU portion of the packet */
     npdu_encode_npdu_data(npdu_data, false, MESSAGE_PRIORITY_NORMAL);
-    pdu_len = npdu_encode_pdu(&buffer[0], dest, &my_address, npdu_data);
+    pdu_len = npdu_encode_pdu(&buffer[0], dest, &portParams->myAddress, npdu_data);
 
     /* encode the APDU portion of the packet */
     len =
@@ -133,15 +132,15 @@ int iam_unicast_encode_pdu(
     int npdu_len = 0;
     int apdu_len = 0;
     int pdu_len = 0;
-    BACNET_ADDRESS my_address;
+    // BACNET_ADDRESS my_address;
     /* The destination will be the same as the src, so copy it over. */
     bacnet_address_copy(dest, src);
     /* dest->net = 0; - no, must direct back to src->net to meet BTL tests */
 
-    datalink_get_my_address(&my_address);
+    // datalink_get_my_address(&my_address);
     /* encode the NPDU portion of the packet */
     npdu_encode_npdu_data(npdu_data, false, MESSAGE_PRIORITY_NORMAL);
-    npdu_len = npdu_encode_pdu(&buffer[0], dest, &my_address, npdu_data);
+    npdu_len = npdu_encode_pdu(&buffer[0], dest, &portParams->myAddress, npdu_data);
     /* encode the APDU portion of the packet */
     apdu_len =
         iam_encode_apdu(&buffer[npdu_len], Device_Object_Instance_Number(),
@@ -165,7 +164,7 @@ int iam_unicast_encode_pdu(
 void Send_I_Am_Unicast(
     PORT_SUPPORT *portSupport,
     uint8_t * buffer,
-    BACNET_ADDRESS *dest )
+    BACNET_ADDRESS * src)
 {
     int pdu_len = 0;
     BACNET_ADDRESS dest;
@@ -185,9 +184,9 @@ void Send_I_Am_Unicast(
 #endif
 
     /* encode the data */
-    pdu_len = iam_unicast_encode_pdu(portSupport, buffer, dest, &npdu_data);
+    pdu_len = iam_unicast_encode_pdu(portSupport, buffer, src, &dest, &npdu_data);
     /* send data */
-    portSupport->SendPdu(portSupport, dest, &npdu_data, &buffer[0], pdu_len);
+    portSupport->SendPdu(portSupport, &dest, &npdu_data, &buffer[0], pdu_len);
 
 #if PRINT_ENABLED
     if (bytes_sent <= 0)

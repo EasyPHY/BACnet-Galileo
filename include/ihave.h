@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "bacstr.h"
-#include "datalink.h"
+#include "multiport.h"
 
 typedef struct BACnet_I_Have_Data {
     BACNET_OBJECT_ID device_id;

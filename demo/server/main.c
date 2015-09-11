@@ -34,46 +34,58 @@
 #include "address.h"
 #include "bacdef.h"
 #include "handlers.h"
-#include "client.h"
 #include "dlenv.h"
 #include "bacdcode.h"
 #include "npdu.h"
 #include "apdu.h"
 #include "iam.h"
-#include "tsm.h"
 #include "device.h"
-#include "bacfile.h"
-#include "datalink.h"
+#include "multiport.h"
 #include "dcc.h"
-#include "filename.h"
-#include "getevent.h"
 #include "net.h"
-#include "txbuf.h"
-#include "lc.h"
 #include "version.h"
-/* include the device object */
-#include "device.h"
-#include "trendlog.h"
-#if defined(INTRINSIC_REPORTING)
-#include "nc.h"
-#endif /* defined(INTRINSIC_REPORTING) */
-#if defined(BACFILE)
-#include "bacfile.h"
-#endif /* defined(BACFILE) */
-#if defined(BAC_UCI)
-#include "ucix.h"
-#endif /* defined(BAC_UCI) */
+#include "bip.h"
 
+#ifdef _MSC_VER
+// todonext4 #include <vld.h>
+#endif
 
-/** @file server/main.c  Example server application using the BACnet Stack. */
+PORT_SUPPORT *headPort = NULL;       /* pointer to list of ports */
 
-/* (Doxygen note: The next two lines pull all the following Javadoc
- *  into the ServerDemo module.) */
-/** @addtogroup ServerDemo */
-/*@{*/
+void Init_Ports(void)
+{
+    headPort = malloc(sizeof(PORT_SUPPORT));
+    if (!headPort) return;
 
-/** Buffer used for receiving */
-static uint8_t Rx_Buf[MAX_MPDU] = { 0 };
+    headPort->next = NULL;
+    headPort->bcastAddr;
+    headPort->txBuf = malloc(1496);
+    headPort->rxBuf = malloc(1496);
+    headPort->max_buf = 1496;
+    headPort->SendPdu = bip_send_pdu;
+    headPort->RecvPdu = bip_receive;
+
+}
+
+void print_help_main(void)
+{
+    printf("Help:\n");
+    printf("  q - Quit\n");
+    printf("  i - Send I-Am Router to all\n");
+    printf("\n");
+}
+
+void Send_I_Am_Broadcast(void)
+{
+    PORT_SUPPORT *port = headPort;
+
+    while (port != NULL)
+    {
+        Send_I_Am(port, &port->txBuf[0]);
+        port = port->next;
+    }
+}
+
 
 /** Initialize the handlers we will utilize.
  * @see Device_Init, apdu_set_unconfirmed_handler, apdu_set_confirmed_handler
@@ -99,40 +111,12 @@ static void Init_Service_Handlers(
         handler_read_property_multiple);
     apdu_set_confirmed_handler(SERVICE_CONFIRMED_WRITE_PROPERTY,
         handler_write_property);
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_WRITE_PROP_MULTIPLE,
-        handler_write_property_multiple);
     apdu_set_confirmed_handler(SERVICE_CONFIRMED_READ_RANGE,
         handler_read_range);
-#if defined(BACFILE)
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_ATOMIC_READ_FILE,
-        handler_atomic_read_file);
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_ATOMIC_WRITE_FILE,
-        handler_atomic_write_file);
-#endif
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_REINITIALIZE_DEVICE,
-        handler_reinitialize_device);
-    apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_UTC_TIME_SYNCHRONIZATION,
-        handler_timesync_utc);
-    apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_TIME_SYNCHRONIZATION,
-        handler_timesync);
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_SUBSCRIBE_COV,
-        handler_cov_subscribe);
-    apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_COV_NOTIFICATION,
-        handler_ucov_notification);
     /* handle communication so we can shutup when asked */
     apdu_set_confirmed_handler(SERVICE_CONFIRMED_DEVICE_COMMUNICATION_CONTROL,
         handler_device_communication_control);
     /* handle the data coming back from private requests */
-    apdu_set_unconfirmed_handler(SERVICE_UNCONFIRMED_PRIVATE_TRANSFER,
-        handler_unconfirmed_private_transfer);
-#if defined(INTRINSIC_REPORTING)
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_ACKNOWLEDGE_ALARM,
-        handler_alarm_ack);
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_GET_EVENT_INFORMATION,
-        handler_get_event_information);
-    apdu_set_confirmed_handler(SERVICE_CONFIRMED_GET_ALARM_SUMMARY,
-        handler_get_alarm_summary);
-#endif /* defined(INTRINSIC_REPORTING) */
 }
 
 static void print_usage(char *filename)
@@ -156,18 +140,7 @@ static void print_help(char *filename)
         "%s 123 Fred\n", filename);
 }
 
-/** Main function of server demo.
- *
- * @see Device_Set_Object_Instance_Number, dlenv_init, Send_I_Am,
- *      datalink_receive, npdu_handler,
- *      dcc_timer_seconds, bvlc_maintenance_timer,
- *      Load_Control_State_Machine_Handler, handler_cov_task,
- *      tsm_timer_milliseconds
- *
- * @param argc [in] Arg count.
- * @param argv [in] Takes one argument: the Device Instance #.
- * @return 0 on success.
- */
+
 int main(
     int argc,
     char *argv[])
@@ -182,110 +155,77 @@ int main(
     uint32_t elapsed_seconds = 0;
     uint32_t elapsed_milliseconds = 0;
     uint32_t address_binding_tmr = 0;
+    bool keepGoing = true;
     uint32_t recipient_scan_tmr = 0;
-#if defined(BAC_UCI)
-    int uciId = 0;
-    struct uci_context *ctx;
+
+#ifdef _MSC_VER
+    // Visual Leak Detection enable, operates on a PER THREAD basis (i.e. make sure enabled on other threads).
+//    VLDEnable();
+
+    // todonext ! Re-enable this.
+    /*
+    // Other debug flags
+    int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+    tmpDbgFlag |= _CRTDBG_ALLOC_MEM_DF;
+    tmpDbgFlag |= _CRTDBG_CHECK_ALWAYS_DF;
+    // tmpDbgFlag |= _CRTDBG_CHECK_CRT_DF;				// library leaks - ignore them
+    tmpDbgFlag |= _CRTDBG_DELAY_FREE_MEM_DF;
+    tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
+    _CrtSetDbgFlag(tmpDbgFlag);
+    //*/
+#else
+    printf("mxxxx: Remember to re-enable VLD\n\n");
 #endif
-    int argi = 0;
-    char *filename = NULL;
 
-    filename = filename_remove_path(argv[0]);
-    for (argi = 1; argi < argc; argi++) {
-        if (strcmp(argv[argi], "--help") == 0) {
-            print_usage(filename);
-            print_help(filename);
-            return 0;
-        }
-        if (strcmp(argv[argi], "--version") == 0) {
-            printf("%s %s\n", filename, BACNET_VERSION_TEXT);
-            printf("Copyright (C) 2014 by Steve Karg and others.\n"
-                "This is free software; see the source for copying conditions.\n"
-                "There is NO warranty; not even for MERCHANTABILITY or\n"
-                "FITNESS FOR A PARTICULAR PURPOSE.\n");
-            return 0;
-        }
+    /* allow the device ID to be set */
+    if (argc > 1) {
+        Device_Set_Object_Instance_Number(strtol(argv[1], NULL, 0));
     }
-#if defined(BAC_UCI)
-    ctx = ucix_init("bacnet_dev");
-    if (!ctx)
-        fprintf(stderr, "Failed to load config file bacnet_dev\n");
-    uciId = ucix_get_option_int(ctx, "bacnet_dev", "0", "Id", 0);
-    printf("ID: %i", uciId);
-    if (uciId != 0) {
-        Device_Set_Object_Instance_Number(uciId);
-    } else {
-#endif /* defined(BAC_UCI) */
-        /* allow the device ID to be set */
-        if (argc > 1) {
-            Device_Set_Object_Instance_Number(strtol(argv[1], NULL, 0));
-        }
-        if (argc > 2) {
-            Device_Object_Name_ANSI_Init(argv[2]);
-        }
-#if defined(BAC_UCI)
+    if (argc > 2) {
+        Device_Object_Name_ANSI_Init(argv[2]);
     }
-    ucix_cleanup(ctx);
-#endif /* defined(BAC_UCI) */
 
-    printf("BACnet Server Demo\n" "BACnet Stack Version %s\n"
+    printf("BACnet Galileo Server Demo\n" "BACnet Stack Version %s\n"
         "BACnet Device ID: %u\n" "Max APDU: %d\n", BACnet_Version,
         Device_Object_Instance_Number(), MAX_APDU);
     /* load any static address bindings to show up
        in our device bindings list */
     address_init();
     Init_Service_Handlers();
-    dlenv_init();
-    atexit(datalink_cleanup);
+
+    Init_Ports();
+
+    //     dlenv_init();
+    //     atexit(datalink_cleanup);
     /* configure the timeout values */
+    Send_I_Am_Broadcast();
     last_seconds = time(NULL);
-    /* broadcast an I-Am on startup */
-    Send_I_Am(&Handler_Transmit_Buffer[0]);
-    /* loop forever */
-    for (;;) {
+    while (keepGoing)
+    {
         /* input */
         current_seconds = time(NULL);
 
         /* returns 0 bytes on timeout */
-        pdu_len = datalink_receive(&src, &Rx_Buf[0], MAX_MPDU, timeout);
+        PORT_SUPPORT *port = headPort;
+        while (port)
+        {
+            pdu_len = port->RecvPdu( port, &src, port->rxBuf, port->max_buf, timeout);
 
-        /* process */
-        if (pdu_len) {
-            npdu_handler(&src, &Rx_Buf[0], pdu_len);
+            /* process */
+            if (pdu_len) {
+                npdu_handler( port, &src, port->rxBuf, pdu_len);
+            }
+
+            port = port->next;
         }
+
         /* at least one second has passed */
-        elapsed_seconds = (uint32_t) (current_seconds - last_seconds);
+        elapsed_seconds = (uint32_t)(current_seconds - last_seconds);
         if (elapsed_seconds) {
             last_seconds = current_seconds;
             dcc_timer_seconds(elapsed_seconds);
-#if defined(BACDL_BIP) && BBMD_ENABLED
-            bvlc_maintenance_timer(elapsed_seconds);
-#endif
-            dlenv_maintenance_timer(elapsed_seconds);
-            Load_Control_State_Machine_Handler();
-            elapsed_milliseconds = elapsed_seconds * 1000;
-            handler_cov_timer_seconds(elapsed_seconds);
-            tsm_timer_milliseconds(elapsed_milliseconds);
-            trend_log_timer(elapsed_seconds);
-#if defined(INTRINSIC_REPORTING)
-            Device_local_reporting();
-#endif
         }
-        handler_cov_task();
-        /* scan cache address */
-        address_binding_tmr += elapsed_seconds;
-        if (address_binding_tmr >= 60) {
-            address_cache_timer(address_binding_tmr);
-            address_binding_tmr = 0;
-        }
-#if defined(INTRINSIC_REPORTING)
-        /* try to find addresses of recipients */
-        recipient_scan_tmr += elapsed_seconds;
-        if (recipient_scan_tmr >= NC_RESCAN_RECIPIENTS_SECS) {
-            Notification_Class_find_recipient();
-            recipient_scan_tmr = 0;
-        }
-#endif
+
         /* output */
 
         /* blink LEDs, Turn on or off outputs, etc */

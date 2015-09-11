@@ -30,7 +30,6 @@
 #include <string.h>
 #include <errno.h>
 #include "config.h"
-#include "txbuf.h"
 #include "memcopy.h"
 #include "bacdef.h"
 #include "bacdcode.h"
@@ -197,19 +196,19 @@ void handler_read_property_multiple(
     int pdu_len = 0;
     BACNET_NPDU_DATA npdu_data;
     int bytes_sent;
-    BACNET_ADDRESS my_address;
+    // BACNET_ADDRESS my_address;
     BACNET_RPM_DATA rpmdata;
     int apdu_len = 0;
     int npdu_len = 0;
     int error = 0;
 
     /* jps_debug - see if we are utilizing all the buffer */
-    /* memset(&Handler_Transmit_Buffer[0], 0xff, sizeof(Handler_Transmit_Buffer)); */
+    /* memset(&portParams->txBuf[0], 0xff, sizeof(Handler_Transmit_Buffer)); */
     /* encode the NPDU portion of the packet */
-    datalink_get_my_address(&my_address);
+    // datalink_get_my_address(&my_address);
     npdu_encode_npdu_data(&npdu_data, false, MESSAGE_PRIORITY_NORMAL);
     npdu_len =
-        npdu_encode_pdu(&Handler_Transmit_Buffer[0], src, &my_address,
+        npdu_encode_pdu(&portParams->txBuf[0], src, &portParams->myAddress,
         &npdu_data);
     if (service_data->segmented_message) {
         rpmdata.error_code = ERROR_CODE_ABORT_SEGMENTATION_NOT_SUPPORTED;
@@ -222,7 +221,7 @@ void handler_read_property_multiple(
     /* decode apdu request & encode apdu reply
        encode complex ack, invoke id, service choice */
     apdu_len =
-        rpm_ack_encode_apdu_init(&Handler_Transmit_Buffer[npdu_len],
+        rpm_ack_encode_apdu_init(&portParams->txBuf[npdu_len],
         service_data->invoke_id);
     for (;;) {
         /* Start by looking for an object ID */
@@ -250,7 +249,7 @@ void handler_read_property_multiple(
         /* Stick this object id into the reply - if it will fit */
         len = rpm_ack_encode_apdu_object_begin(&Temp_Buf[0], &rpmdata);
         copy_len =
-            memcopy(&Handler_Transmit_Buffer[npdu_len], &Temp_Buf[0], apdu_len,
+            memcopy(&portParams->txBuf[npdu_len], &Temp_Buf[0], apdu_len,
             len, MAX_APDU);
         if (copy_len == 0) {
 #if PRINT_ENABLED
@@ -293,7 +292,7 @@ void handler_read_property_multiple(
                         rpm_ack_encode_apdu_object_property(&Temp_Buf[0],
                         rpmdata.object_property, rpmdata.array_index);
                     copy_len =
-                        memcopy(&Handler_Transmit_Buffer[npdu_len],
+                        memcopy(&portParams->txBuf[npdu_len],
                         &Temp_Buf[0], apdu_len, len, MAX_APDU);
                     if (copy_len == 0) {
 #if PRINT_ENABLED
@@ -311,7 +310,7 @@ void handler_read_property_multiple(
                         ERROR_CLASS_PROPERTY,
                         ERROR_CODE_PROPERTY_IS_NOT_AN_ARRAY);
                     copy_len =
-                        memcopy(&Handler_Transmit_Buffer[npdu_len],
+                        memcopy(&portParams->txBuf[npdu_len],
                         &Temp_Buf[0], apdu_len, len, MAX_APDU);
                     if (copy_len == 0) {
 #if PRINT_ENABLED
@@ -333,7 +332,7 @@ void handler_read_property_multiple(
                     if (property_count == 0) {
                         /* handle the error code - but use the special property */
                         len =
-                            RPM_Encode_Property(&Handler_Transmit_Buffer
+                            RPM_Encode_Property(&portParams->txBuf
                             [npdu_len], (uint16_t) apdu_len, MAX_APDU,
                             &rpmdata);
                         if (len > 0) {
@@ -352,7 +351,7 @@ void handler_read_property_multiple(
                                 RPM_Object_Property(&property_list,
                                 special_object_property, index);
                             len =
-                                RPM_Encode_Property(&Handler_Transmit_Buffer
+                                RPM_Encode_Property(&portParams->txBuf
                                 [npdu_len], (uint16_t) apdu_len, MAX_APDU,
                                 &rpmdata);
                             if (len > 0) {
@@ -371,7 +370,7 @@ void handler_read_property_multiple(
             } else {
                 /* handle an individual property */
                 len =
-                    RPM_Encode_Property(&Handler_Transmit_Buffer[npdu_len],
+                    RPM_Encode_Property(&portParams->txBuf[npdu_len],
                     (uint16_t) apdu_len, MAX_APDU, &rpmdata);
                 if (len > 0) {
                     apdu_len += len;
@@ -389,7 +388,7 @@ void handler_read_property_multiple(
                 decode_len++;
                 len = rpm_ack_encode_apdu_object_end(&Temp_Buf[0]);
                 copy_len =
-                    memcopy(&Handler_Transmit_Buffer[npdu_len], &Temp_Buf[0],
+                    memcopy(&portParams->txBuf[npdu_len], &Temp_Buf[0],
                     apdu_len, len, MAX_APDU);
                 if (copy_len == 0) {
 #if PRINT_ENABLED
@@ -425,7 +424,7 @@ void handler_read_property_multiple(
     if (error) {
         if (error == BACNET_STATUS_ABORT) {
             apdu_len =
-                abort_encode_apdu(&Handler_Transmit_Buffer[npdu_len],
+                abort_encode_apdu(&portParams->txBuf[npdu_len],
                 service_data->invoke_id,
                 abort_convert_error_code(rpmdata.error_code), true);
 #if PRINT_ENABLED
@@ -433,7 +432,7 @@ void handler_read_property_multiple(
 #endif
         } else if (error == BACNET_STATUS_ERROR) {
             apdu_len =
-                bacerror_encode_apdu(&Handler_Transmit_Buffer[npdu_len],
+                bacerror_encode_apdu(&portParams->txBuf[npdu_len],
                 service_data->invoke_id, SERVICE_CONFIRMED_READ_PROP_MULTIPLE,
                 rpmdata.error_class, rpmdata.error_code);
 #if PRINT_ENABLED
@@ -441,7 +440,7 @@ void handler_read_property_multiple(
 #endif
         } else if (error == BACNET_STATUS_REJECT) {
             apdu_len =
-                reject_encode_apdu(&Handler_Transmit_Buffer[npdu_len],
+                reject_encode_apdu(&portParams->txBuf[npdu_len],
                 service_data->invoke_id,
                 reject_convert_error_code(rpmdata.error_code));
 #if PRINT_ENABLED
@@ -452,7 +451,7 @@ void handler_read_property_multiple(
 
     pdu_len = apdu_len + npdu_len;
     bytes_sent =
-        portParams->SendPdu(portParams, src, &npdu_data, &Handler_Transmit_Buffer[0],
+        portParams->SendPdu(portParams, src, &npdu_data, &portParams->txBuf[0],
         pdu_len);
 #if PRINT_ENABLED
     if (bytes_sent <= 0) {

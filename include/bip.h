@@ -30,6 +30,7 @@
 #include "bacdef.h"
 #include "npdu.h"
 #include "net.h"
+#include "multiport.h"
 
 /* specific defines for BACnet/IP over Ethernet */
 #define MAX_HEADER (1 + 1 + 2)
@@ -46,6 +47,7 @@ extern bool BIP_Debug;
     bool bip_init(
         char *ifname);
     void bip_set_interface(
+        PORT_SUPPORT *portParams,
         char *ifname);
     void bip_cleanup(
         void);
@@ -58,32 +60,44 @@ extern bool BIP_Debug;
     bool bip_valid(
         void);
     void bip_get_broadcast_address(
-        BACNET_ADDRESS * dest); /* destination address */
+        const PORT_SUPPORT *portParams,
+        BACNET_ADDRESS * dest);
     void bip_get_my_address(
-        BACNET_ADDRESS * my_address);
+        const PORT_SUPPORT *portParams,
+        BACNET_MAC_ADDRESS * my_address);
 
     /* function to send a packet out the BACnet/IP socket */
     /* returns zero on success, non-zero on failure */
     int bip_send_pdu(
-        BACNET_ADDRESS * dest,  /* destination address */
+        const PORT_SUPPORT *portParams,
+        BACNET_ADDRESS * dest,			/* destination address */
         BACNET_NPDU_DATA * npdu_data,   /* network information */
-        uint8_t * pdu,  /* any data to be sent - may be null */
-        unsigned pdu_len);      /* number of bytes of data */
+        uint8_t * pdu,					/* any data to be sent - may be null */
+        uint16_t pdu_len);				/* number of bytes of data */
 
-    /* receives a BACnet/IP packet */
+    int bip_send_pdu_local_only(
+        const PORT_SUPPORT *portParams,
+        uint8_t *destMAC,      /* destination address, if null, then broadcast */
+        uint8_t * pdu,      /* any data to be sent - may be null */
+        uint16_t pdu_len);
+
+        /* receives a BA
+    Cnet/IP packet */
     /* returns the number of octets in the PDU, or zero on failure */
     uint16_t bip_receive(
+        const PORT_SUPPORT *portParams,
         BACNET_ADDRESS * src,   /* source address */
-        uint8_t * pdu,  /* PDU data */
+        uint8_t * pdu,          /* PDU data */
         uint16_t max_pdu,       /* amount of space available in the PDU  */
         unsigned timeout);      /* milliseconds to wait for a packet */
 
-    /* use network byte order for setting */
-    void bip_set_port(
-        uint16_t port);
-    /* returns network byte order */
-    uint16_t bip_get_port(
-        void);
+    // Because the router uses multiple ports, we cannot depend on a single variable for all ports...
+    ///* use network byte order for setting */
+    //void bip_set_port(
+    //    uint16_t port);
+    ///* returns network byte order */
+    //uint16_t bip_get_port(
+    //    void);
 
     /* use network byte order for setting */
     void bip_set_addr(
@@ -109,6 +123,10 @@ extern bool BIP_Debug;
     long bip_getaddrbyname(
         const char *host_name);
 
-
+extern int get_local_address_ioctl(
+    PORT_SUPPORT *portParams,
+    char *ifname,
+    struct in_addr *addr,
+    int request);
 
 #endif

@@ -29,7 +29,7 @@
 #include "bacdef.h"
 #include "bacaddr.h"
 #include "npdu.h"
-#include "datalink.h"
+#include "multiport.h"
 
 void Send_I_Am(PORT_SUPPORT *portParams, uint8_t * buffer);
 

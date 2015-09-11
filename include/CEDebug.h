@@ -1,5 +1,8 @@
 /* ---------------------------------------------------------------------------------------
 
+                EasyPHY(R) Reference BACnet Stack and Application 
+
+        Copyright (C) 2015 ConnectEx, Inc.  All rights reserverd.
 
    All software deliverables are provided "AS IS" and ConnectEx, Inc. makes no
    representations or warranties, either express or implied, in respect to any of
@@ -10,11 +13,16 @@
    of this shall apply notwithstanding any failure of essential purpose of any
    limited remedy.
 
-   Copyright (C) 2015 ConnectEx, Inc.
+   License is granted for the use of this code solely for the development, test 
+   and support of ConnectEx's EasyPHY(R) line of communication modules.
+   Commercial use of this software only granted for hardware platforms that support
+   ConnectEx's EasyPHY(R) line of communication modules.
+
+   Contact us at info@connect-ex.com for further information.
 
  ------------------------------------------------------------------------------------------*/
  
- #pragma once 
+#pragma once 
 
 #include <net.h>
 
