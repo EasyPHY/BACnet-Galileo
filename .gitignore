@@ -1,15 +1,1 @@
-*.obj 
-*.tlog 
-*.pdb 
-*.lastbuildstate 
-ports/win32/Microsoft Visual Studio 2013/BACnet Handler Library/Debug/h_ihave.obj
-ports/win32/Microsoft Visual Studio 2013/BACnet Handler Library/Debug/*.obj
-ports/win32/Microsoft Visual Studio 2013/BACnet Handler Library/Debug
-ports/win32/Microsoft Visual Studio 2013/BACnet Object Definitions/Debug/
-ports/win32/Microsoft Visual Studio 2013/BACnet Stack Development.opensdf
-ports/win32/Microsoft Visual Studio 2013/BACnet Stack Development.sdf
-ports/win32/Microsoft Visual Studio 2013/BACnet Stack Development.v12.suo
-ports/win32/Microsoft Visual Studio 2013/BACnet Stack Library/Debug/*.obj
-ports/win32/Microsoft Visual Studio 2013/Debug/
-ports/win32/Microsoft Visual Studio 2013/BACnet Stack Library/Debug/
-ports/win32/Microsoft Visual Studio 2013/Server/Debug/
+

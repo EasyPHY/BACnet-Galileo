@@ -1,7 +1,6 @@
 # BACnet-Galileo
 EasyPHY Reference stack for Intel Galileo development board
 
- *** This code is NOT ready for use yet ****
- 
+Contains Eclipse Workspace set up for Intel's IoT Development Kit IDE 
  
  
