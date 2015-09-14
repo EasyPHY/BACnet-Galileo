@@ -12,7 +12,7 @@ Steps to get to a running BACnet stack on the Galileo. Assuming windows dev plat
 5. Compile
 6. Set up a IP (SSH) debug connection under run->debug configuration, then 'Setup Connection'
 7. Run Eclipse debugger !
-8. Browse to the BACnet Stack over the network connection using a BACnet Client
+8. Browse to the BACnet Stack over the network connection using a BACnet Client, e.g.: http://www.connect-ex.com/easyphy-bacnet-operator-workstation/
 
 Questions: info@connect-ex.com
 
